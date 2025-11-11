@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "SariStore MS Auth",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
