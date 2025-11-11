@@ -24,7 +24,7 @@ stores.
 
 <p>
   <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=ts,html,css,tailwind,svelte,express,postgres,neovim" />
+    <img src="https://skillicons.dev/icons?i=html,css,tailwind,ts,svelte,express,postgres,vite,neovim" />
   </a>
 </p>
 
