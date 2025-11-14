@@ -12,7 +12,9 @@ stores.
 
 ## 🤔 Why SariStore MS
 
-Sari-sari stores are a vital part of neighborhoods in the Philippines. However, as vital as they are, these Sari-sari stores often face problems that can disrupt their daily operations, or worse, lead to closure. Many small stores struggle to keep up with manual management of sales, inventory, and customer credit. As the world shifts toward digital solutions, SariStore MS helps by providing:
+
+Sari-sari stores are a **vital part of neighborhoods in the Philippines**. However, as vital as they are, these Sari-sari stores often face **problems that can disrupt their daily operations**, or worse, **lead to closure**. Many small stores struggle to keep up with **manual management of sales, inventory, and customer credit**. As the world shifts toward **digital solutions**, **SariStore MS** helps by providing:
+
 
 * Faster and more accurate transactions
 * Automatic tracking of inventory and low-stock alerts
