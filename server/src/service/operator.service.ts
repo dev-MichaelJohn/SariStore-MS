@@ -36,7 +36,7 @@ export default class OperatorService {
      * @memberof OperatorService
      */
     static async GetOperatorByCode(operatorCode: string): Promise<Partial<IOperatorSelect> | null> {
-        if(operatorCode.trim() === "" || operatorCode.length === 0) return null;
+        if(operatorCode.trim().length === 0) return null;
         const [ operator ] = await db.select(OperatorService.defaultManageableFields)
             .from(Operator)
             .where(eq(Operator.code, operatorCode))
@@ -54,7 +54,7 @@ export default class OperatorService {
      * @memberof OperatorService
      */
     static async GetOperatorById(id: string): Promise<Partial<IOperatorSelect> | null> {
-        if(id.trim() === "" || id.length === 0) return null;
+        if(id.trim().length === 0) return null;
         const [ operator ] = await db.select(OperatorService.defaultManageableFields)
             .from(Operator)
             .where(eq(Operator.id, id))
@@ -67,12 +67,13 @@ export default class OperatorService {
      * Fetches all operators
      *
      * @static
-     * @return {*}  {Promise<IOperatorSelect[]>}
+     * @return {*}  {Promise<IOperatorSelect[] | null>}
      * @memberof OperatorService
      */
-    static async GetAllOperators(): Promise<Partial<IOperatorSelect>[]> {
+    static async GetAllOperators(): Promise<Partial<IOperatorSelect>[] | null> {
         const operators = await db.select(OperatorService.defaultManageableFields)
             .from(Operator);
+        if(!operators || operators.length === 0) return null;
         return operators;
     }
     
@@ -121,17 +122,17 @@ export default class OperatorService {
      */
     static async UpdateOperatorViaTransaction(data: Partial<IOperatorInsert>, tx: ITransaction): Promise<Partial<IOperatorSelect> | null> {
         let operator = await OperatorService.GetOperatorById(data?.id as string);
-        if(!operator || operator === null) return null;
+        if(!operator) return null;
 
         operator = { ...operator, ...data };
-        const updatedOperator = await tx.update(Operator)
+        const [ updatedOperator ] = await tx.update(Operator)
             .set(operator)
             .where(eq(Operator.id, operator?.id as string))
+            .returning(OperatorService.defaultManageableFields);
         if(!updatedOperator) return null;
         return updatedOperator;
     };
 
-    
     /**
      * Atomic deletion of an existing operator
      *
@@ -143,9 +144,9 @@ export default class OperatorService {
      */
     static async DeleteOperatorViaTransaction(id: string, tx: ITransaction): Promise<void | null> {
         const operator = await OperatorService.GetOperatorById(id);
-        if(!operator || operator === null) return null;
+        if(!operator) return null;
         
         await tx.delete(Operator)
-            .where(eq(Operator.id, operator?.id as string));
+            .where(eq(Operator.id, operator.id as string));
     };
 };

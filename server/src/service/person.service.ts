@@ -21,7 +21,7 @@ export default class PersonService {
      * @memberof PersonService
      */
     static async GetPersonById(id: string): Promise<IPersonSelect | null> {
-        if(id.trim() === "" || id.length === 0) return null;
+        if(id.trim().length === 0) return null;
         const [ person ] = await db.select().from(Person).where(eq(Person.id, id)).limit(1);
         if(!person) return null;
         return person;
@@ -34,8 +34,9 @@ export default class PersonService {
      * @return {*}  {Promise<IPersonSelect[]>}
      * @memberof PersonService
      */
-    static async GetAllPersons(): Promise<IPersonSelect[]> {
+    static async GetAllPersons(): Promise<IPersonSelect[] | null> {
         const persons = await db.select().from(Person);
+        if(!persons || persons.length === 0) return null;
         return persons;
     }
 
@@ -43,6 +44,7 @@ export default class PersonService {
      * Creates a new person record
      *
      * @static
+     * @deprecated
      * @param {IPersonInsert} data
      * @return {*}  {Promise<IPersonSelect>}
      * @memberof PersonService
@@ -61,9 +63,10 @@ export default class PersonService {
      * @return {*}  {Promise<IPersonSelect>}
      * @memberof PersonService
      */
-    static async CreatePersonViaTransaction(data: IPersonInsert, tx: ITransaction): Promise<IPersonSelect> {
+    static async CreatePersonViaTransaction(data: IPersonInsert, tx: ITransaction): Promise<IPersonSelect | null> {
         const [ person ] = await tx.insert(Person).values(data).returning();
-        return person!;
+        if(!person) return null;
+        return person;
     }
 
     /**
@@ -77,12 +80,13 @@ export default class PersonService {
      */
     static async UpdatePersonViaTranaction(data: Partial<IPersonInsert>, tx: ITransaction): Promise<IPersonSelect | null> {
         let person = await PersonService.GetPersonById(data?.id as string);
-        if(!person || person === null) return null;
+        if(!person) return null;
 
         person = { ...person, ...data };
-        const newPerson = await tx.update(Person)
+        const [ newPerson ] = await tx.update(Person)
             .set(person)
-            .where(eq(Person.id, person?.id as string));
+            .where(eq(Person.id, person.id))
+            .returning();
         if(!newPerson) return null;
         return newPerson;
     }
@@ -98,9 +102,9 @@ export default class PersonService {
      */
     static async DeletePersonViaTransaction(id: string, tx: ITransaction): Promise<void | null> {
         const person = await PersonService.GetPersonById(id);
-        if(!person || person === null) return null;
+        if(!person) return null;
 
         await tx.delete(Person)
-            .where(eq(Person.id, person?.id as string)); 
+            .where(eq(Person.id, person.id)); 
     }
 };
