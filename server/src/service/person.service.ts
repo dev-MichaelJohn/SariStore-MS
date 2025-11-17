@@ -22,7 +22,7 @@ export default class PersonService {
      * @memberof PersonService
      */
     static async GetPersonById(id: string): Promise<IPersonSelect | null> {
-        if(id.trim().length === 0) return null;
+        if(!id || id.trim().length === 0) return null;
         const [ person ] = await db.select().from(Person).where(eq(Person.id, id)).limit(1);
         if(!person) return null;
         return person;
@@ -51,7 +51,7 @@ export default class PersonService {
      * @memberof PersonService
      */
     static async CreatePerson(data: IPersonInsert): Promise<IPersonSelect | null> {
-        if(isObjectEmpty(data)) return null;
+        if(!data || isObjectEmpty(data)) return null;
 
         const [ person ] = await db.insert(Person).values(data).returning();
         return person!;
@@ -67,6 +67,9 @@ export default class PersonService {
      * @memberof PersonService
      */
     static async CreatePersonViaTransaction(data: IPersonInsert, tx: ITransaction): Promise<IPersonSelect | null> {
+        if(!data || isObjectEmpty(data)) return null;
+        if(!tx) return null;
+
         const [ person ] = await tx.insert(Person).values(data).returning();
         if(!person) return null;
         return person;
@@ -82,6 +85,9 @@ export default class PersonService {
      * @memberof PersonService
      */
     static async UpdatePersonViaTranaction(data: Partial<IPersonInsert>, tx: ITransaction): Promise<IPersonSelect | null> {
+        if(!data || isObjectEmpty(data)) return null;
+        if(!tx) return null;
+
         let person = await PersonService.GetPersonById(data?.id as string);
         if(!person) return null;
 
@@ -104,6 +110,9 @@ export default class PersonService {
      * @memberof PersonService
      */
     static async DeletePersonViaTransaction(id: string, tx: ITransaction): Promise<void | null> {
+        if(!id || id.trim().length === 0) return null;
+        if(!tx) return null;
+
         const person = await PersonService.GetPersonById(id);
         if(!person) return null;
 
