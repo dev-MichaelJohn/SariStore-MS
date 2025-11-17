@@ -22,4 +22,9 @@ export default class InventoryService {
         if(!inventories || inventories.length === 0) return null;
         return inventories;
     } 
+    
+    static async CreateInventoryViaTransaction(data: IInventoryInsert, tx: ITransaction): Promise<IInventorySelect | null> {
+
+    }
+
 };

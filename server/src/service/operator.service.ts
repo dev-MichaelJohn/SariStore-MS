@@ -1,6 +1,7 @@
 import db, { ITransaction } from "../config/db.config.js";
 import { eq } from "drizzle-orm";
 import { Operator } from "../db/schema.db.js";
+import { isObjectEmpty } from "../lib/utils.lib.js";
 
 export type IOperatorSelect = typeof Operator.$inferSelect;
 export type IOperatorInsert = typeof Operator.$inferInsert;
@@ -104,6 +105,8 @@ export default class OperatorService {
      * @memberof OperatorService
      */
     static async CreateOperatorViaTransaction(data: IOperatorInsert, tx: ITransaction): Promise<Partial<IOperatorSelect> | null> {
+        if(!isObjectEmpty(data)) return null; 
+        
         const [ operator ] = await tx.insert(Operator)
             .values(data)
             .returning(OperatorService.defaultManageableFields);

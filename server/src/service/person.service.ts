@@ -1,6 +1,7 @@
 import db, { ITransaction } from "../config/db.config.js";
 import { eq } from "drizzle-orm";
 import { Person } from "../db/schema.db.js";
+import { isObjectEmpty } from "../lib/utils.lib.js";
 
 export type IPersonSelect = typeof Person.$inferSelect;
 export type IPersonInsert = typeof Person.$inferInsert;
@@ -49,7 +50,9 @@ export default class PersonService {
      * @return {*}  {Promise<IPersonSelect>}
      * @memberof PersonService
      */
-    static async CreatePerson(data: IPersonInsert): Promise<IPersonSelect> {
+    static async CreatePerson(data: IPersonInsert): Promise<IPersonSelect | null> {
+        if(isObjectEmpty(data)) return null;
+
         const [ person ] = await db.insert(Person).values(data).returning();
         return person!;
     }

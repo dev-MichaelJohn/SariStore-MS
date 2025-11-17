@@ -2,6 +2,7 @@ import db, { ITransaction } from "../config/db.config.js";
 import { eq, and, ilike, lte, SQL } from "drizzle-orm";
 import { Product } from "../db/schema.db.js";
 import { Column } from "drizzle-orm";
+import { isObjectEmpty } from "../lib/utils.lib.js";
 
 export type IProductSelect = typeof Product.$inferSelect;
 export type IProductInsert = typeof Product.$inferInsert;
@@ -23,7 +24,7 @@ export default class ProductService {
      * @memberof ProductService
      */
     private static GenerateFilters(filters?: Partial<IProductSelect>): SQL<boolean> | null {
-        if(!filters || Object.keys(filters).length === 0) return null;
+        if(!filters || isObjectEmpty(filters)) return null;
         
         const conditions = Object.entries(filters).map(([ key, value ]) => {
             const column = Product[key as keyof typeof Product] as Column;
@@ -53,7 +54,8 @@ export default class ProductService {
      * @memberof ProductService
      */
     static async GetProductById(id: string): Promise<IProductSelect | null> {
-        if(id.trim().length === 0) return null;
+        if(!id || id.trim().length === 0) return null;
+        
         const [ product ] = await db.select()
             .from(Product)
             .where(eq(Product.id, id))
@@ -71,6 +73,8 @@ export default class ProductService {
      * @memberof PersonService
      */
     static async GetAllProducts(filters?: Partial<IProductSelect>): Promise<IProductSelect[] | null> {
+        if(!filters || isObjectEmpty(filters)) return null;
+        
         const filterParams = ProductService.GenerateFilters(filters);
         let products;
 
@@ -97,6 +101,9 @@ export default class ProductService {
      * @memberof PersonService
      */
     static async CreateProductViaTransaction(data: IProductInsert, tx: ITransaction): Promise<IProductSelect | null> {
+        if(!data || isObjectEmpty(data)) return null;
+        if(!tx) return null;
+
         const [ product ] = await tx.insert(Product)
             .values(data)
             .returning();
@@ -115,6 +122,9 @@ export default class ProductService {
      * @memberof PersonService
      */
     static async UpdateProductViaTransaction(data: Partial<IProductInsert>, tx: ITransaction): Promise<IProductSelect | null> {
+        if(!data || isObjectEmpty(data)) return null;
+        if(!tx) return null;
+
         let product = await ProductService.GetProductById(data?.id as string);
         if(!product) return null;
 
@@ -137,6 +147,9 @@ export default class ProductService {
      * @memberof PersonService
      */
     static async DeleteProductViaTransaction(id: string, tx: ITransaction): Promise<void | null> {
+        if(!id || id.trim().length === 0) return null;
+        if(!tx) return null;
+        
         const product = await ProductService.GetProductById(id);
         if(!product) return null;
 
