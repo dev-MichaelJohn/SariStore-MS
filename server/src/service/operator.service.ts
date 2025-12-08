@@ -37,7 +37,7 @@ export default class OperatorService {
      * @memberof OperatorService
      */
     static async GetOperatorByCode(operatorCode: string): Promise<Partial<IOperatorSelect> | null> {
-        if(operatorCode.trim().length === 0) return null;
+        if(!operatorCode || operatorCode.trim().length === 0) return null;
         const [ operator ] = await db.select(OperatorService.defaultManageableFields)
             .from(Operator)
             .where(eq(Operator.code, operatorCode))
@@ -55,7 +55,7 @@ export default class OperatorService {
      * @memberof OperatorService
      */
     static async GetOperatorById(id: string): Promise<Partial<IOperatorSelect> | null> {
-        if(id.trim().length === 0) return null;
+        if(!id || id.trim().length === 0) return null;
         const [ operator ] = await db.select(OperatorService.defaultManageableFields)
             .from(Operator)
             .where(eq(Operator.id, id))
