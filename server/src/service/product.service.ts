@@ -70,10 +70,9 @@ export default class ProductService {
      * @static
      * @param {Partial<IProductSelect>} filters
      * @return {*}  {(Promise<IProductSelect[] | null>)}
-     * @memberof PersonService
+     * @memberof ProductService
      */
     static async GetAllProducts(page: number, filters?: Partial<IProductSelect>): Promise<IProductSelect[] | null> {
-        if(!filters || isObjectEmpty(filters)) return null;
         if(page < 0) return null;
         
         const filterParams = ProductService.GenerateFilters(filters);
@@ -101,8 +100,8 @@ export default class ProductService {
      * @static
      * @param {IProductInsert} data
      * @param {ITransaction} tx 
-     * @return {*}  {(Promise<IProductSelect[] | null>)}
-     * @memberof PersonService
+     * @return {*}  {(Promise<IProductSelect | null>)}
+     * @memberof ProductService
      */
     static async CreateProductViaTransaction(data: IProductInsert, tx: ITransaction): Promise<IProductSelect | null> {
         if(!data || isObjectEmpty(data)) return null;
@@ -115,15 +114,14 @@ export default class ProductService {
         return product;
     };
 
-
     /**
      * Atomic updating of an existing product record 
      *
      * @static
-     * @param {Patial<IPersonInsert>} data
+     * @param {Patial<IProductInsert>} data
      * @param {ITransaction} tx
-     * @return {*}  {Promise<IPersonSelect | null>}
-     * @memberof PersonService
+     * @return {*}  {Promise<IProductSelect | null>}
+     * @memberof ProductService
      */
     static async UpdateProductViaTransaction(data: Partial<IProductInsert>, tx: ITransaction): Promise<IProductSelect | null> {
         if(!data || isObjectEmpty(data)) return null;
@@ -147,8 +145,8 @@ export default class ProductService {
      * @static
      * @param {string} id
      * @param {ITransaction} tx
-     * @return {*}  {Promise<IPersonSelect | null>}
-     * @memberof PersonService
+     * @return {*}  {Promise<void | null>}
+     * @memberof ProductService
      */
     static async DeleteProductViaTransaction(id: string, tx: ITransaction): Promise<void | null> {
         if(!id || id.trim().length === 0) return null;

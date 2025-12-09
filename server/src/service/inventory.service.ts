@@ -8,7 +8,15 @@ export type IInventorySelect =  typeof Inventory.$inferSelect;
 export type IInventoryInsert = typeof Inventory.$inferInsert;
 
 export default class InventoryService {
-    private static GenerateFilters(filters?: Partial<IInventorySelect>) {
+    /**
+     * Generates dynamic conditions to be used in filtering results of GetAllInventories
+     *
+     * @static
+     * @param {Partial<IInventorySelect>} filters
+     * @return {*}  {(SQL<boolean> | null)}
+     * @memberof InventoryService
+     */
+    private static GenerateFilters(filters?: Partial<IInventorySelect>): SQL<boolean> | null {
         if(!filters || isObjectEmpty(filters)) return null;
         
         const conditions = Object.entries(filters).map(([key, value]) => {
@@ -28,6 +36,14 @@ export default class InventoryService {
         return conditions.length > 0 ? and(...conditions) as SQL<boolean> : null;
     }
     
+    /**
+     * Fetches an inventory record by their UUID
+     *
+     * @static
+     * @param {string} id
+     * @return {*}  {(Promise<IInventorySelect | null>)}
+     * @memberof InventoryService
+     */
     static async GetInventoryById(id: string): Promise<IInventorySelect | null> {
         if(id.trim().length === 0) return null;
         const [ inventory ] = await db.select()
@@ -36,7 +52,15 @@ export default class InventoryService {
         return (!inventory) ? null : inventory;
     };
 
-    static async GetAllInventory(page: number, filters?: Partial<IInventorySelect>): Promise<IInventorySelect[] | null> {
+    /**
+     * Fetches all inventories and applies dynamic filters
+     *
+     * @static
+     * @param {Partial<IInventorySelect>} filters
+     * @return {*}  {(Promise<IInventorySelect[] | null>)}
+     * @memberof InventoryService
+     */
+    static async GetAllInventories(page: number, filters?: Partial<IInventorySelect>): Promise<IInventorySelect[] | null> {
         if(page < 0) return null;
 
         const DEFAULT_PAGE_ITEMS = 10;
@@ -57,6 +81,15 @@ export default class InventoryService {
         return (!inventories || inventories.length === 0) ? null : inventories;
     } 
     
+    /**
+     * Atomic creation of a new inventory record
+     *
+     * @static
+     * @param {IInventorySelect} data
+     * @param {ITransaction} tx 
+     * @return {*}  {(Promise<InventoryService | null>)}
+     * @memberof InventoryService
+     */
     static async CreateInventoryViaTransaction(data: IInventoryInsert, tx: ITransaction): Promise<IInventorySelect | null> {
         if(!data || isObjectEmpty(data)) return null;
         if(!tx) return null;
@@ -67,6 +100,15 @@ export default class InventoryService {
         return (!inventory) ? null : inventory;
     }
 
+    /**
+     * Atomic updating of an existing inventory record 
+     *
+     * @static
+     * @param {Patial<IInventoryInsert>} data
+     * @param {ITransaction} tx
+     * @return {*}  {Promise<IInventorySelect | null>}
+     * @memberof InventoryService
+     */
     static async UpdateInventoryViaTransaction(data: Partial<IInventoryInsert>, tx: ITransaction): Promise<IInventorySelect | null> {
         if(!data || isObjectEmpty(data)) return null;
         if(!tx) return null;
@@ -82,6 +124,15 @@ export default class InventoryService {
         return (!inventory) ? null : inventory;
     }
 
+    /**
+     * Atomic updating of an existing inventory record 
+     *
+     * @static
+     * @param {string} id
+     * @param {ITransaction} tx
+     * @return {*}  {Promise<void | null>}
+     * @memberof InventoryService
+     */
     static async DeleteInventoryViaTransaction(id: string, tx: ITransaction): Promise<null | void> {
         if(!id || id.trim().length === 0) return null;
         if(!tx) return null;
