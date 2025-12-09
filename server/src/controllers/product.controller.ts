@@ -4,6 +4,7 @@ import AppResponse from "../lib/response.lib.js";
 import ProductService, { IProductSelect } from "../service/product.service.js";
 import ProductCreatorService from "../service/productCreator.service.js";
 import { isObjectEmpty } from "../lib/utils.lib.js";
+import db from "../config/db.config.js";
 
 export default class ProductController {
     static GetProductById = expressAsyncHandler(
@@ -41,4 +42,32 @@ export default class ProductController {
         res.status(response.statusCode).json(response);
     });
 
+    static UpdateProduct = expressAsyncHandler(
+    async(req: Request, res: Response, next: NextFunction) => {
+        const { product } = req.body!.data;
+        if(!product || isObjectEmpty(product)) return next(AppResponse.BadRequest("❌ Product data required"));
+        let updated;
+
+        await db.transaction(async(tx) => {
+             updated = await ProductService.UpdateProductViaTransaction(product, tx);
+        });
+        if(!updated) return next(AppResponse.InternalServerError("❌ Failed to update product record"));
+
+        const response = AppResponse.OK("✅ Product record updated successfully");
+        res.status(response.statusCode).json(response);
+    });
+
+    static DeleteProduct = expressAsyncHandler(
+    async(req: Request, res: Response, next: NextFunction) => {
+        const { id } = req.params;
+        let deleted;
+
+        await db.transaction(async(tx) => {
+            deleted = await ProductService.DeleteProductViaTransaction(String(id), tx);
+        });
+        if(deleted === null) return next(AppResponse.InternalServerError("❌ Failed to delete product record"));
+
+        const response = AppResponse.OK("✅ Product record deleted successfully");
+        res.status(response.statusCode).json(response);
+    });
 }
