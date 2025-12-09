@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, date, timestamp, index } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, date, timestamp, index, real, integer } from "drizzle-orm/pg-core";
 import { GenerateOperatorCode } from "../lib/operator.lib";
 
 export const Person = pgTable("persons", {
@@ -34,8 +34,8 @@ export const Product = pgTable("products", {
     name: varchar("name", { length: 256 }).notNull(),
     description: varchar("description", { length: 1024 }),
     unitType: varchar("unit_type", { length: 128 }).notNull(),
-    costPrice: varchar("cost_price", { length: 64 }).notNull(),
-    sellPrice: varchar("sell_price", { length: 64 }).notNull(),
+    costPrice: real("cost_price").notNull(),
+    sellPrice: real("sell_price").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().$onUpdate(() => new Date()),
 });
@@ -43,8 +43,8 @@ export const Product = pgTable("products", {
 export const Inventory = pgTable("inventories", {
     id: uuid("id").primaryKey().defaultRandom(),
     productId: uuid("product_id").notNull().references(() => Product.id),
-    quantity: varchar("quantity", { length: 64 }).notNull(),
-    reorderLevel: varchar("reorder_level", { length: 64 }).notNull(),
+    quantity: integer("quantity").notNull(),
+    reorderLevel: integer("reorder_level").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().$onUpdate(() => new Date()),
 });
