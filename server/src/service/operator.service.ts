@@ -105,7 +105,8 @@ export default class OperatorService {
      * @memberof OperatorService
      */
     static async CreateOperatorViaTransaction(data: IOperatorInsert, tx: ITransaction): Promise<Partial<IOperatorSelect> | null> {
-        if(!isObjectEmpty(data)) return null; 
+        if(!data || isObjectEmpty(data)) return null;
+        if(!tx) return null;
         
         const [ operator ] = await tx.insert(Operator)
             .values(data)
@@ -124,6 +125,9 @@ export default class OperatorService {
      * @memberof OperatorService
      */
     static async UpdateOperatorViaTransaction(data: Partial<IOperatorInsert>, tx: ITransaction): Promise<Partial<IOperatorSelect> | null> {
+        if(!data || isObjectEmpty(data)) return null;
+        if(!tx) return null;
+        
         let operator = await OperatorService.GetOperatorById(data?.id as string);
         if(!operator) return null;
 
@@ -146,6 +150,9 @@ export default class OperatorService {
      * @memberof OperatorService
      */
     static async DeleteOperatorViaTransaction(id: string, tx: ITransaction): Promise<void | null> {
+        if(!id || id.trim().length < 0) return null;
+        if(!tx) return null;
+        
         const operator = await OperatorService.GetOperatorById(id);
         if(!operator) return null;
         
