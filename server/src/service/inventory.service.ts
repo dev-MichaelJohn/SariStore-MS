@@ -1,5 +1,5 @@
 import db, { ITransaction } from "../config/db.config.js";
-import { eq, and, ilike, lte, SQL } from "drizzle-orm";
+import { eq, and, lte, SQL } from "drizzle-orm";
 import { Inventory } from "../db/schema.db.js";
 import { Column } from "drizzle-orm";
 import { isObjectEmpty } from "../lib/utils.lib.js";
@@ -67,7 +67,7 @@ export default class InventoryService {
         return (!inventory) ? null : inventory;
     }
 
-    static async UpdateInventoryViaTransaction(data: Partial<IInventoryInsert>, tx: ITransaction) {
+    static async UpdateInventoryViaTransaction(data: Partial<IInventoryInsert>, tx: ITransaction): Promise<IInventorySelect | null> {
         if(!data || isObjectEmpty(data)) return null;
         if(!tx) return null;
 
@@ -80,5 +80,16 @@ export default class InventoryService {
             .where(eq(Inventory.id, inventoryRecord.id))
             .returning();
         return (!inventory) ? null : inventory;
+    }
+
+    static async DeleteInventoryViaTransaction(id: string, tx: ITransaction): Promise<null | void> {
+        if(!id || id.trim().length === 0) return null;
+        if(!tx) return null;
+
+        const inventory = await InventoryService.GetInventoryById(id);
+        if(!inventory) return null;
+
+        await tx.delete(Inventory)
+            .where(eq(Inventory.id, inventory.id));
     }
 };
