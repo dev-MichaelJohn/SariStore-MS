@@ -106,10 +106,11 @@ export default class InventoryService {
      * @static
      * @param {Patial<IInventoryInsert>} data
      * @param {ITransaction} tx
+     * param {"increment" | "decrement"} mode
      * @return {*}  {Promise<IInventorySelect | null>}
      * @memberof InventoryService
      */
-    static async UpdateInventoryViaTransaction(data: Partial<IInventoryInsert>, tx: ITransaction): Promise<IInventorySelect | null> {
+    static async UpdateInventoryViaTransaction(data: Partial<IInventoryInsert>, tx: ITransaction, mode: "increment" | "decrement"): Promise<IInventorySelect | null> {
         if(!data || isObjectEmpty(data)) return null;
         if(!tx) return null;
 
@@ -117,6 +118,12 @@ export default class InventoryService {
         if(!inventoryRecord) return null;
 
         inventoryRecord = { ...inventoryRecord, ...data };
+        if(data.quantity !== undefined && mode !== undefined) {
+            if(mode === "increment") inventoryRecord.quantity += data.quantity;
+            if(mode === "decrement") inventoryRecord.quantity -= data.quantity;
+        }
+
+        if(inventoryRecord.quantity < 0) return null;
         const [ inventory ] = await tx.update(Inventory)
             .set(inventoryRecord)
             .where(eq(Inventory.id, inventoryRecord.id))
