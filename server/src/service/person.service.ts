@@ -47,7 +47,7 @@ export default class PersonService {
      * @static
      * @deprecated
      * @param {IPersonInsert} data
-     * @return {*}  {Promise<IPersonSelect>}
+     * @return {*}  {Promise<IPersonSelect | null>}
      * @memberof PersonService
      */
     static async CreatePerson(data: IPersonInsert): Promise<IPersonSelect | null> {
@@ -63,7 +63,7 @@ export default class PersonService {
      * @static
      * @param {IPersonInsert} data
      * @param {ITransaction} tx
-     * @return {*}  {Promise<IPersonSelect>}
+     * @return {*}  {Promise<IPersonSelect | null>}
      * @memberof PersonService
      */
     static async CreatePersonViaTransaction(data: IPersonInsert, tx: ITransaction): Promise<IPersonSelect | null> {
