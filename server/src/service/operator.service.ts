@@ -2,6 +2,7 @@ import db, { ITransaction } from "../config/db.config.js";
 import { eq } from "drizzle-orm";
 import { Operator } from "../db/schema.db.js";
 import { isObjectEmpty } from "../lib/utils.lib.js";
+import AppResponse from "../lib/response.lib.js";
 
 export type IOperatorSelect = typeof Operator.$inferSelect;
 export type IOperatorInsert = typeof Operator.$inferInsert;
@@ -111,8 +112,8 @@ export default class OperatorService {
         const [ operator ] = await tx.insert(Operator)
             .values(data)
             .returning(OperatorService.defaultManageableFields);
-        if(!operator) return null;
-        return operator!;
+        if(!operator) throw AppResponse.InternalServerError("❌ Failed to create operator record");
+        return operator;
     };
 
     /**
@@ -136,7 +137,7 @@ export default class OperatorService {
             .set(operator)
             .where(eq(Operator.id, operator?.id as string))
             .returning(OperatorService.defaultManageableFields);
-        if(!updatedOperator) return null;
+        if(!updatedOperator) throw AppResponse.InternalServerError("❌ Failed to create operator record");
         return updatedOperator;
     };
 
