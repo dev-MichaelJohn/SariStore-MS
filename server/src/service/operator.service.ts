@@ -33,7 +33,7 @@ export default class OperatorService {
      *
      * @static
      * @param {string} operatorCode
-     * @return {*}  {(Promise<IOperatorSelect | null>)}
+     * @return {*}  {(Promise<Partial<IOperatorSelect> | null>)}
      * @memberof OperatorService
      */
     static async GetOperatorByCode(operatorCode: string): Promise<Partial<IOperatorSelect> | null> {
@@ -51,7 +51,7 @@ export default class OperatorService {
      *
      * @static
      * @param {string} id
-     * @return {*}  {(Promise<IOperatorSelect | null>)}
+     * @return {*}  {(Promise<Partial<IOperatorSelect> | null>)}
      * @memberof OperatorService
      */
     static async GetOperatorById(id: string): Promise<Partial<IOperatorSelect> | null> {
@@ -84,7 +84,7 @@ export default class OperatorService {
      * @deprecated
      * @static
      * @param {IOperatorInsert} data
-     * @return {*}  {Promise<IOperatorSelect>}
+     * @return {*}  {Promise<Partial<IOperatorSelect> | null>}
      * @member OperatorService
      */
     static async CreateOperator(data: IOperatorInsert): Promise<Partial<IOperatorSelect> | null> {
@@ -101,7 +101,7 @@ export default class OperatorService {
      * @static
      * @param {IOperatorInsert} data
      * @param {ITransaction} tx
-     * @return {*}  {Promise<IOperatorSelect>}
+     * @return {*}  {Promise<Partial<IOperatorSelect> | null>}
      * @memberof OperatorService
      */
     static async CreateOperatorViaTransaction(data: IOperatorInsert, tx: ITransaction): Promise<Partial<IOperatorSelect> | null> {
@@ -120,7 +120,7 @@ export default class OperatorService {
      * @static
      * @param {Partial<IOperatorInsert>} data
      * @param {ITransaction} tx
-     * @return {*}  {Promise<IOperatorSelect>}
+     * @return {*}  {Promise<Partial<IOperatorSelect> | null>}
      * @memberof OperatorService
      */
     static async UpdateOperatorViaTransaction(data: Partial<IOperatorInsert>, tx: ITransaction): Promise<Partial<IOperatorSelect> | null> {
