@@ -3,6 +3,7 @@ import { eq, and, ilike, lte, SQL } from "drizzle-orm";
 import { Product } from "../db/schema.db.js";
 import { Column } from "drizzle-orm";
 import { isObjectEmpty } from "../lib/utils.lib.js";
+import AppResponse from "../lib/response.lib.js";
 
 export type IProductSelect = typeof Product.$inferSelect;
 export type IProductInsert = typeof Product.$inferInsert;
@@ -110,7 +111,7 @@ export default class ProductService {
         const [ product ] = await tx.insert(Product)
             .values(data)
             .returning();
-        if(!product) return null;
+        if(!product) throw AppResponse.InternalServerError("❌ Failed to create product record");
         return product;
     };
 
@@ -135,7 +136,7 @@ export default class ProductService {
             .set(product)
             .where(eq(Product.id, product.id))
             .returning();
-        if(!newProduct) return null;
+        if(!newProduct) throw AppResponse.InternalServerError("❌ Failed to update product record");
         return newProduct;
     };
     
