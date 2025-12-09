@@ -72,21 +72,25 @@ export default class ProductService {
      * @return {*}  {(Promise<IProductSelect[] | null>)}
      * @memberof PersonService
      */
-    static async GetAllProducts(filters?: Partial<IProductSelect>): Promise<IProductSelect[] | null> {
+    static async GetAllProducts(page: number, filters?: Partial<IProductSelect>): Promise<IProductSelect[] | null> {
         if(!filters || isObjectEmpty(filters)) return null;
+        if(page < 0) return null;
         
         const filterParams = ProductService.GenerateFilters(filters);
-        let products;
+        const DEFAULT_PAGE_ITEMS = 10;
+        let query;
 
         if(!filterParams) {
-            products = await db.select()
-                .from(Product);
+            query = db.select()
+                .from(Product)
         } else {
-            products = await db.select()
+            query = db.select()
                 .from(Product)
                 .where(filterParams);
         }
 
+        const products = await query.limit(DEFAULT_PAGE_ITEMS)
+            .offset((page - 1) * DEFAULT_PAGE_ITEMS);
         if(!products || products.length === 0) return null;
         return products;
     };
