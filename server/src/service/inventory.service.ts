@@ -132,7 +132,7 @@ export default class InventoryService {
             .where(eq(Inventory.id, inventoryRecord.id))
             .returning();
         
-        if(!inventory) throw AppResponse.InternalServerError("❌ Failed to create inventory record");
+        if(!inventory) throw AppResponse.InternalServerError("❌ Failed to update inventory record");
         return inventory;
     }
 

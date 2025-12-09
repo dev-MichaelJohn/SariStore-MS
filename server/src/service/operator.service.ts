@@ -137,7 +137,7 @@ export default class OperatorService {
             .set(operator)
             .where(eq(Operator.id, operator?.id as string))
             .returning(OperatorService.defaultManageableFields);
-        if(!updatedOperator) throw AppResponse.InternalServerError("❌ Failed to create operator record");
+        if(!updatedOperator) throw AppResponse.InternalServerError("❌ Failed to update operator record");
         return updatedOperator;
     };
 

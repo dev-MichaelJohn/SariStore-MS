@@ -2,6 +2,7 @@ import db, { ITransaction } from "../config/db.config.js";
 import { eq } from "drizzle-orm";
 import { Person } from "../db/schema.db.js";
 import { isObjectEmpty } from "../lib/utils.lib.js";
+import AppResponse from "../lib/response.lib.js";
 
 export type IPersonSelect = typeof Person.$inferSelect;
 export type IPersonInsert = typeof Person.$inferInsert;
@@ -71,7 +72,7 @@ export default class PersonService {
         if(!tx) return null;
 
         const [ person ] = await tx.insert(Person).values(data).returning();
-        if(!person) return null;
+        if(!person) throw AppResponse.InternalServerError("❌ Failed to create person record");
         return person;
     }
 
@@ -96,7 +97,7 @@ export default class PersonService {
             .set(person)
             .where(eq(Person.id, person.id))
             .returning();
-        if(!newPerson) return null;
+        if(!newPerson) throw AppResponse.InternalServerError("❌ Failed to update person record");
         return newPerson;
     }
 
