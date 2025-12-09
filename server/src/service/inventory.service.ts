@@ -3,6 +3,7 @@ import { eq, and, lte, SQL } from "drizzle-orm";
 import { Inventory } from "../db/schema.db.js";
 import { Column } from "drizzle-orm";
 import { isObjectEmpty } from "../lib/utils.lib.js";
+import AppResponse from "../lib/response.lib.js";
 
 export type IInventorySelect =  typeof Inventory.$inferSelect;
 export type IInventoryInsert = typeof Inventory.$inferInsert;
@@ -97,7 +98,9 @@ export default class InventoryService {
         const [ inventory ] = await tx.insert(Inventory)
             .values(data)
             .returning();
-        return (!inventory) ? null : inventory;
+
+        if(!inventory) throw AppResponse.InternalServerError("❌ Failed to create inventory record");
+        return inventory;
     }
 
     /**
@@ -128,7 +131,9 @@ export default class InventoryService {
             .set(inventoryRecord)
             .where(eq(Inventory.id, inventoryRecord.id))
             .returning();
-        return (!inventory) ? null : inventory;
+        
+        if(!inventory) throw AppResponse.InternalServerError("❌ Failed to create inventory record");
+        return inventory;
     }
 
     /**
