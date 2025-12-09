@@ -18,11 +18,10 @@ export default class OperatorCreatorService {
      *
      * @static
      * @param {IPersonInsert} person
-     * @param {IOperatorInsert} operator
-     * @return {*}  {(Promise<IOperatorSelect | null>)}
+     * @param {Omit<IOperatorInsert, "personId">} operator
      * @memberof OperatorCreatorService
      */
-    static async Create(person: IPersonInsert, operator: IOperatorInsert) {
+    static async Create(person: IPersonInsert, operator: Omit<IOperatorInsert, "personId">) {
         return await db.transaction(async(tx) => {
             const personRecord = await PersonService.CreatePersonViaTransaction(person, tx);
             if(!personRecord) throw (AppResponse.InternalServerError("❌ Failed to create person record"));
