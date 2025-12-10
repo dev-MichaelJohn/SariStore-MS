@@ -123,6 +123,7 @@ export default class InventoryService {
 
         let inventoryRecord = await InventoryService.GetInventoryById(data?.id as string);
         if(!inventoryRecord) return null;
+        if(inventoryRecord.deletedAt === null && inventoryRecord.deletedAt === undefined) return null;
 
         inventoryRecord = { ...inventoryRecord, ...data };
         if(data.quantity !== undefined && mode !== undefined) {
@@ -155,6 +156,7 @@ export default class InventoryService {
 
         const inventory = await InventoryService.GetInventoryById(id);
         if(!inventory) return null;
+        if(inventory.deletedAt === null && inventory.deletedAt === undefined) return null;
 
         await tx.update(Inventory)
             .set({ deletedAt: new Date() })
