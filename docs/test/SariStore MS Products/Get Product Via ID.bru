@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: http://localhost:3030/api/v1/products/
+  url: http://localhost:3030/api/v1/products/:id
   body: none
   auth: inherit
+}
+
+params:path {
+  id: 
 }
 
 settings {
