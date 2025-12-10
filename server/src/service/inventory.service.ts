@@ -33,7 +33,7 @@ export default class InventoryService {
                     return undefined; 
             }
         }).filter((c): c is SQL<boolean> => c !== undefined);
-        
+
         return conditions.length > 0 ? and(...conditions) as SQL<boolean> : null;
     }
     
@@ -50,7 +50,9 @@ export default class InventoryService {
         const [ inventory ] = await db.select()
             .from(Inventory)
             .where(eq(Inventory.id, id));
-        return (!inventory) ? null : inventory;
+
+        return (!inventory || 
+            (inventory.deletedAt === null || inventory.deletedAt === undefined)) ? null : inventory;
     };
 
     /**
@@ -61,7 +63,7 @@ export default class InventoryService {
      * @return {*}  {(Promise<IInventorySelect[] | null>)}
      * @memberof InventoryService
      */
-    static async GetAllInventories(page: number, filters?: Partial<IInventorySelect>): Promise<IInventorySelect[] | null> {
+    static async GetAllInventories(page: number, filters?: Omit<Partial<IInventorySelect>, "deletedAt">): Promise<IInventorySelect[] | null> {
         if(page < 0) return null;
 
         const DEFAULT_PAGE_ITEMS = 10;
@@ -79,7 +81,9 @@ export default class InventoryService {
 
         const inventories = await query.limit(DEFAULT_PAGE_ITEMS)
             .offset((page - 1) * DEFAULT_PAGE_ITEMS);
-        return (!inventories || inventories.length === 0) ? null : inventories;
+
+        const inventoriesFiltered = inventories.filter((inventory) => (inventory.deletedAt !== null && inventory.deletedAt !== undefined));
+        return (!inventoriesFiltered || inventoriesFiltered.length === 0) ? null : inventoriesFiltered;
     } 
     
     /**
@@ -134,11 +138,11 @@ export default class InventoryService {
             .returning();
         
         if(!inventory) throw AppResponse.InternalServerError("❌ Failed to update inventory record");
-        return inventory;
+        return (inventory.deletedAt === null || inventory.deletedAt === undefined) ? null : inventory;
     }
 
     /**
-     * Atomic updating of an existing inventory record 
+     * Atomic deletion of an existing inventory record 
      *
      * @static
      * @param {string} id
@@ -153,7 +157,8 @@ export default class InventoryService {
         const inventory = await InventoryService.GetInventoryById(id);
         if(!inventory) return null;
 
-        await tx.delete(Inventory)
+        await tx.update(Inventory)
+            .set({ deletedAt: new Date() })
             .where(eq(Inventory.id, inventory.id));
     }
 };
