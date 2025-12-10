@@ -95,7 +95,7 @@ export default class ProductService {
         if(!products) return null;
 
         const productsFiltered = products.filter((product) => !product.deletedAt);
-        return (productsFiltered.length === 0) ? null : products;
+        return (productsFiltered.length === 0) ? null : productsFiltered;
     };
     
     /**
