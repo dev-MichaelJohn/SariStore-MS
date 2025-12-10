@@ -123,7 +123,7 @@ export default class InventoryService {
 
         let inventoryRecord = await InventoryService.GetInventoryById(data?.id as string);
         if(!inventoryRecord) return null;
-        if(inventoryRecord.deletedAt) return null;
+        if(inventoryRecord.deletedAt) throw AppResponse.BadRequest("❌ Inventory record doesn't exist");
 
         inventoryRecord = { ...inventoryRecord, ...data };
         if(data.quantity !== undefined) {
@@ -156,7 +156,7 @@ export default class InventoryService {
 
         const inventory = await InventoryService.GetInventoryById(id);
         if(!inventory) return null;
-        if(inventory.deletedAt) return null;
+        if(inventory.deletedAt) throw AppResponse.BadRequest("❌ Inventory record doesn't exist");
 
         await tx.update(Inventory)
             .set({ deletedAt: new Date() })
