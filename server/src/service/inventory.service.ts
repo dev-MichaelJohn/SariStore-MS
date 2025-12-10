@@ -51,8 +51,7 @@ export default class InventoryService {
             .from(Inventory)
             .where(eq(Inventory.id, id));
 
-        return (!inventory || 
-            (inventory.deletedAt === null || inventory.deletedAt === undefined)) ? null : inventory;
+        return (!inventory) ? null : inventory;
     };
 
     /**
