@@ -2,6 +2,7 @@ import db from "../config/db.config";
 import ProductService, { IProductInsert } from "./product.service";
 import InventoryService, { IInventoryInsert } from "./inventory.service";
 import AppResponse from "../lib/response.lib";
+import ProductCategoryService, { IProductCategoryInsert } from "./productCategory.service";
 
 /**
  * Wrapper service for creating a product record along with their associated inventory record
@@ -18,9 +19,19 @@ export default class ProductCreatorService {
      * @param {Omit<IInventorySelect, "productId">} inventory
      * @memberof ProductCreatorService
      */
-    static async Create(product: IProductInsert, inventory: Omit<IInventoryInsert, "productId">) {
+    static async Create(product: IProductInsert, productCategory: IProductCategoryInsert | string, inventory: Omit<IInventoryInsert, "productId">) {
         return await db.transaction(async (tx) => {
-            const productRecord = await ProductService.CreateProductViaTransaction(product, tx);
+            let productCategoryId;
+            if(typeof(productCategory) !== "string") {
+                const productCategoryRecord = await ProductCategoryService.CreateProductCategoryViaTransaction(productCategory, tx);
+                if(!productCategoryRecord) throw AppResponse.InternalServerError("❌ Failed to create product category record");
+                productCategoryId = productCategory.id;
+            } else {
+                productCategoryId = productCategory;
+            }
+
+            const newProduct: IProductInsert = {...product, "categoryId": productCategoryId as string };
+            const productRecord = await ProductService.CreateProductViaTransaction(newProduct, tx);
             if(!productRecord) throw AppResponse.InternalServerError("❌ Failed to create product record");
 
             const inventoryData = { ...inventory, productId: productRecord.id };
