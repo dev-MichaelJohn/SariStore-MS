@@ -119,7 +119,7 @@ export default class OperatorService {
         
         let operator = await OperatorService.GetOperatorById(data?.id as string);
         if(!operator) return null;
-        if(operator.deletedAt) return null;
+        if(operator.deletedAt) throw AppResponse.BadRequest("❌ Operator doesn't exist");
 
         operator = { ...operator, ...data };
         const [ updatedOperator ] = await tx.update(Operator)
@@ -145,7 +145,7 @@ export default class OperatorService {
         
         const operator = await OperatorService.GetOperatorById(id);
         if(!operator) return null;
-        if(operator.deletedAt) return null;
+        if(operator.deletedAt) throw AppResponse.BadRequest("❌ Operator doesn't exist");
         
         await tx.update(Operator)
             .set({ deletedAt: new Date() })
