@@ -73,6 +73,7 @@ export default class ProductCategoryService {
      * @memberof ProductCategoryService
      */
     static async CreateProductCategoryViaTransaction(data: IProductCategoryInsert, tx: ITransaction): Promise<IProductCategorySelect | null> {
+        console.log(data);
         if(!data || isObjectEmpty(data)) return null;
         if(!tx) return null;
 

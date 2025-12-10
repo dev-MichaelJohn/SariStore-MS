@@ -6,10 +6,32 @@ meta {
 
 post {
   url: http://localhost:3030/api/v1/products/
-  body: none
+  body: json
   auth: inherit
+}
+
+body:json {
+  {
+    "data": {
+      "product": {
+        "name": "Bear Brand 500g",
+        "description": "Milk for all ages",
+        "unitType": "Pack",
+        "costPrice": 15.0,
+        "sellPrice": 18.0
+      },
+      "productCategory": {
+        "name": "Food"
+      },
+      "inventory": {
+        "quantity": 100,
+        "reorderLevel": 50
+      }
+    }
+  }
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
 }

@@ -31,11 +31,12 @@ export default class ProductController {
 
     static CreateProduct = expressAsyncHandler(
     async(req: Request, res: Response, next: NextFunction) => {
-        const { product, inventory } = req.body!.data;
+        const { product, productCategory, inventory } = req.body!.data;
         if(!product || isObjectEmpty(product)) return next(AppResponse.BadRequest("❌ Product data required"));
+        if(!productCategory) return next(AppResponse.BadRequest("❌ Product Category data required"));
         if(!inventory || isObjectEmpty(inventory)) return next(AppResponse.BadRequest("❌ Inventory data required"));
 
-        const newInventory = await ProductCreatorService.Create(product, inventory);
+        const newInventory = await ProductCreatorService.Create(product, productCategory, inventory);
         if(!newInventory) return next(AppResponse.InternalServerError("❌ Failed to create product and inventory record"));
 
         const response = AppResponse.OK("✅ Product + Inventory record created successfully");

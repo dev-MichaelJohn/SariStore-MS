@@ -92,6 +92,7 @@ export default class InventoryService {
      * @memberof InventoryService
      */
     static async CreateInventoryViaTransaction(data: IInventoryInsert, tx: ITransaction): Promise<IInventorySelect | null> {
+        console.log(data);
         if(!data || isObjectEmpty(data)) return null;
         if(!tx) return null;
 

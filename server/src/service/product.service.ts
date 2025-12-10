@@ -106,6 +106,7 @@ export default class ProductService {
      * @memberof ProductService
      */
     static async CreateProductViaTransaction(data: IProductInsert, tx: ITransaction): Promise<IProductSelect | null> {
+        console.log(data);
         if(!data || isObjectEmpty(data)) return null;
         if(!tx) return null;
 
