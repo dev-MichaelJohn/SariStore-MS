@@ -81,7 +81,7 @@ export default class InventoryService {
         const inventories = await query.limit(DEFAULT_PAGE_ITEMS)
             .offset((page - 1) * DEFAULT_PAGE_ITEMS);
 
-        const inventoriesFiltered = inventories.filter((inventory) => (inventory.deletedAt !== null && inventory.deletedAt !== undefined));
+        const inventoriesFiltered = inventories.filter((inventory) => (inventory.deletedAt === null && inventory.deletedAt === undefined));
         return (!inventoriesFiltered || inventoriesFiltered.length === 0) ? null : inventoriesFiltered;
     } 
     
@@ -123,10 +123,10 @@ export default class InventoryService {
 
         let inventoryRecord = await InventoryService.GetInventoryById(data?.id as string);
         if(!inventoryRecord) return null;
-        if(inventoryRecord.deletedAt === null && inventoryRecord.deletedAt === undefined) return null;
+        if(inventoryRecord.deletedAt) return null;
 
         inventoryRecord = { ...inventoryRecord, ...data };
-        if(data.quantity !== undefined && mode !== undefined) {
+        if(data.quantity !== undefined) {
             if(mode === "increment") inventoryRecord.quantity += data.quantity;
             if(mode === "decrement") inventoryRecord.quantity -= data.quantity;
         }
@@ -138,7 +138,7 @@ export default class InventoryService {
             .returning();
         
         if(!inventory) throw AppResponse.InternalServerError("❌ Failed to update inventory record");
-        return (inventory.deletedAt === null || inventory.deletedAt === undefined) ? null : inventory;
+        return (inventory.deletedAt) ? null : inventory;
     }
 
     /**
@@ -156,7 +156,7 @@ export default class InventoryService {
 
         const inventory = await InventoryService.GetInventoryById(id);
         if(!inventory) return null;
-        if(inventory.deletedAt === null && inventory.deletedAt === undefined) return null;
+        if(inventory.deletedAt) return null;
 
         await tx.update(Inventory)
             .set({ deletedAt: new Date() })
