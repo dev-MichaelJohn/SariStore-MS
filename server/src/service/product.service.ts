@@ -69,6 +69,7 @@ export default class ProductService {
      * Fetches all products and applies dynamic filters
      *
      * @static
+     * @param {number} page
      * @param {Partial<IProductSelect>} filters
      * @return {*}  {(Promise<IProductSelect[] | null>)}
      * @memberof ProductService
