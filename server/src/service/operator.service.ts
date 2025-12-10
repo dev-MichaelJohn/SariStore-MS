@@ -16,20 +16,6 @@ export type IOperatorInsert = typeof Operator.$inferInsert;
 export default class OperatorService {
 
     /**
-     * Default manageable fields for an operator
-     *
-     * @private
-     * @memberof OperatorService
-     */
-    private static defaultManageableFields = {
-        id: Operator.id,
-        code: Operator.code,
-        personId: Operator.personId,
-        createdAt: Operator.createdAt,
-        updatedAt: Operator.updatedAt
-    };
-
-    /**
      * Fetches an operator by their operator code
      *
      * @static
@@ -39,7 +25,7 @@ export default class OperatorService {
      */
     static async GetOperatorByCode(operatorCode: string): Promise<Partial<IOperatorSelect> | null> {
         if(!operatorCode || operatorCode.trim().length === 0) return null;
-        const [ operator ] = await db.select(OperatorService.defaultManageableFields)
+        const [ operator ] = await db.select()
             .from(Operator)
             .where(eq(Operator.code, operatorCode))
             .limit(1);
@@ -57,7 +43,7 @@ export default class OperatorService {
      */
     static async GetOperatorById(id: string): Promise<Partial<IOperatorSelect> | null> {
         if(!id || id.trim().length === 0) return null;
-        const [ operator ] = await db.select(OperatorService.defaultManageableFields)
+        const [ operator ] = await db.select()
             .from(Operator)
             .where(eq(Operator.id, id))
             .limit(1);
@@ -73,10 +59,12 @@ export default class OperatorService {
      * @memberof OperatorService
      */
     static async GetAllOperators(): Promise<Partial<IOperatorSelect>[] | null> {
-        const operators = await db.select(OperatorService.defaultManageableFields)
+        const operators = await db.select()
             .from(Operator);
-        if(!operators || operators.length === 0) return null;
-        return operators;
+        if(!operators) return null;
+        
+        const operatorsFiltered = operators.filter((operator) => !operator.deletedAt);
+        return (operatorsFiltered.length === 0) ? null : operatorsFiltered;
     }
     
     /**
@@ -91,7 +79,7 @@ export default class OperatorService {
     static async CreateOperator(data: IOperatorInsert): Promise<Partial<IOperatorSelect> | null> {
         const [ operator ] = await db.insert(Operator)
             .values(data)
-            .returning(OperatorService.defaultManageableFields);
+            .returning()
         if(!operator) return null;
         return operator;
     };
@@ -111,7 +99,7 @@ export default class OperatorService {
         
         const [ operator ] = await tx.insert(Operator)
             .values(data)
-            .returning(OperatorService.defaultManageableFields);
+            .returning()
         if(!operator) throw AppResponse.InternalServerError("❌ Failed to create operator record");
         return operator;
     };
@@ -131,12 +119,13 @@ export default class OperatorService {
         
         let operator = await OperatorService.GetOperatorById(data?.id as string);
         if(!operator) return null;
+        if(operator.deletedAt) return null;
 
         operator = { ...operator, ...data };
         const [ updatedOperator ] = await tx.update(Operator)
             .set(operator)
             .where(eq(Operator.id, operator?.id as string))
-            .returning(OperatorService.defaultManageableFields);
+            .returning()
         if(!updatedOperator) throw AppResponse.InternalServerError("❌ Failed to update operator record");
         return updatedOperator;
     };
@@ -156,8 +145,10 @@ export default class OperatorService {
         
         const operator = await OperatorService.GetOperatorById(id);
         if(!operator) return null;
+        if(operator.deletedAt) return null;
         
-        await tx.delete(Operator)
+        await tx.update(Operator)
+            .set({ deletedAt: new Date() })
             .where(eq(Operator.id, operator.id as string));
     };
 };
