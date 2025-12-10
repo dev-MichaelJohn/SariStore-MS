@@ -92,8 +92,10 @@ export default class ProductService {
 
         const products = await query.limit(DEFAULT_PAGE_ITEMS)
             .offset((page - 1) * DEFAULT_PAGE_ITEMS);
-        if(!products || products.length === 0) return null;
-        return products;
+        if(!products) return null;
+
+        const productsFiltered = products.filter((product) => !product.deletedAt);
+        return (productsFiltered.length === 0) ? null : products;
     };
     
     /**
@@ -132,6 +134,7 @@ export default class ProductService {
 
         let product = await ProductService.GetProductById(data?.id as string);
         if(!product) return null;
+        if(product.deletedAt) return null;
 
         product = { ...product, ...data };
         const [ newProduct ] = await tx.update(Product)
@@ -157,8 +160,10 @@ export default class ProductService {
         
         const product = await ProductService.GetProductById(id);
         if(!product) return null;
+        if(product.deletedAt) return null;
 
-        await tx.delete(Product)
+        await tx.update(Product)
+            .set({ deletedAt: new Date() })
             .where(eq(Product.id, product.id))
     }
 };
