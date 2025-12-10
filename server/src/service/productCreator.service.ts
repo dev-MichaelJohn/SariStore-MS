@@ -25,7 +25,7 @@ export default class ProductCreatorService {
             if(typeof(productCategory) !== "string") {
                 const productCategoryRecord = await ProductCategoryService.CreateProductCategoryViaTransaction(productCategory, tx);
                 if(!productCategoryRecord) throw AppResponse.InternalServerError("❌ Failed to create product category record");
-                productCategoryId = productCategory.id;
+                productCategoryId = productCategoryRecord.id;
             } else {
                 productCategoryId = productCategory;
             }

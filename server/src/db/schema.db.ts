@@ -10,6 +10,7 @@ export const Person = pgTable("persons", {
     suffix: varchar("suffix", { length: 256 }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().$onUpdate(() => new Date()),
+    deletedAt: timestamp("deleted_at"),
 });
 
 export const Operator = pgTable("operators", {
@@ -19,14 +20,17 @@ export const Operator = pgTable("operators", {
     password: varchar("password", { length: 256 }).notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().$onUpdate(() => new Date()),
+    deletedAt: timestamp("deleted_at"),
 }, (table) => [
-    index("code_idx").on(table.code)
+    index("code_idx").on(table.code),
 ]);
 
 export const ProductCategory = pgTable("product_categories", {
     id: uuid("id").primaryKey().defaultRandom(),
     name: varchar("name", { length: 256 }).notNull().unique(),
-});
+}, (table) => [
+    index("product_category_name_idx").on(table.name),
+]);
 
 export const Product = pgTable("products", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -38,7 +42,11 @@ export const Product = pgTable("products", {
     sellPrice: real("sell_price").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().$onUpdate(() => new Date()),
-});
+    deletedAt: timestamp("deleted_at"),
+}, (table) => [
+    index("category_id_idx").on(table.categoryId),
+    index("name_idx").on(table.name),
+]);
 
 export const Inventory = pgTable("inventories", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -47,4 +55,7 @@ export const Inventory = pgTable("inventories", {
     reorderLevel: integer("reorder_level").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().$onUpdate(() => new Date()),
-});
+    deletedAt: timestamp("deleted_at"),
+}, (table) => [
+    index("inventory_product_id_idx").on(table.productId),
+]);
