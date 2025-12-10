@@ -38,8 +38,10 @@ export default class PersonService {
      */
     static async GetAllPersons(): Promise<IPersonSelect[] | null> {
         const persons = await db.select().from(Person);
-        if(!persons || persons.length === 0) return null;
-        return persons;
+        if(!persons) return null;
+
+        const personsFiltered = persons.filter((person) => !person.deletedAt);
+        return (personsFiltered.length === 0) ? null : personsFiltered;
     }
 
     /**
@@ -55,7 +57,8 @@ export default class PersonService {
         if(!data || isObjectEmpty(data)) return null;
 
         const [ person ] = await db.insert(Person).values(data).returning();
-        return person!;
+        if(!person) throw AppResponse.InternalServerError("❌ Failed to create person record");
+        return person;
     }
 
     /**
@@ -91,6 +94,7 @@ export default class PersonService {
 
         let person = await PersonService.GetPersonById(data?.id as string);
         if(!person) return null;
+        if(person.deletedAt) return null;
 
         person = { ...person, ...data };
         const [ newPerson ] = await tx.update(Person)
@@ -116,8 +120,10 @@ export default class PersonService {
 
         const person = await PersonService.GetPersonById(id);
         if(!person) return null;
+        if(person.deletedAt) return null;
 
-        await tx.delete(Person)
+        await tx.update(Person)
+            .set({ deletedAt: new Date() })
             .where(eq(Person.id, person.id)); 
     }
 };
