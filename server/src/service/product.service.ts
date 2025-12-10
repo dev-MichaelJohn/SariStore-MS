@@ -134,7 +134,7 @@ export default class ProductService {
 
         let product = await ProductService.GetProductById(data?.id as string);
         if(!product) return null;
-        if(product.deletedAt) return null;
+        if(product.deletedAt) throw AppResponse.BadRequest("❌ Product record doesn't exist");
 
         product = { ...product, ...data };
         const [ newProduct ] = await tx.update(Product)
@@ -160,7 +160,7 @@ export default class ProductService {
         
         const product = await ProductService.GetProductById(id);
         if(!product) return null;
-        if(product.deletedAt) return null;
+        if(product.deletedAt) throw AppResponse.BadRequest("❌ Product record doesn't exist");
 
         await tx.update(Product)
             .set({ deletedAt: new Date() })
