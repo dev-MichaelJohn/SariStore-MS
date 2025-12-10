@@ -94,7 +94,7 @@ export default class PersonService {
 
         let person = await PersonService.GetPersonById(data?.id as string);
         if(!person) return null;
-        if(person.deletedAt) return null;
+        if(person.deletedAt) throw AppResponse.BadRequest("❌ Person doesn't exist");
 
         person = { ...person, ...data };
         const [ newPerson ] = await tx.update(Person)
@@ -120,7 +120,7 @@ export default class PersonService {
 
         const person = await PersonService.GetPersonById(id);
         if(!person) return null;
-        if(person.deletedAt) return null;
+        if(person.deletedAt) throw AppResponse.BadRequest("❌ Person doesn't exist");
 
         await tx.update(Person)
             .set({ deletedAt: new Date() })
