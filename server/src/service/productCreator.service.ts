@@ -19,7 +19,7 @@ export default class ProductCreatorService {
      * @param {Omit<IInventorySelect, "productId">} inventory
      * @memberof ProductCreatorService
      */
-    static async Create(product: IProductInsert, productCategory: IProductCategoryInsert | string, inventory: Omit<IInventoryInsert, "productId">) {
+    static async Create(product: Omit<IProductInsert, "categoryId">, productCategory: IProductCategoryInsert | string, inventory: Omit<IInventoryInsert, "productId">) {
         return await db.transaction(async (tx) => {
             let productCategoryId;
             if(typeof(productCategory) !== "string") {
