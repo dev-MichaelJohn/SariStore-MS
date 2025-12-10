@@ -81,7 +81,7 @@ export default class InventoryService {
         const inventories = await query.limit(DEFAULT_PAGE_ITEMS)
             .offset((page - 1) * DEFAULT_PAGE_ITEMS);
 
-        const inventoriesFiltered = inventories.filter((inventory) => (inventory.deletedAt === null && inventory.deletedAt === undefined));
+        const inventoriesFiltered = inventories.filter((inventory) => !inventory.deletedAt);
         return (!inventoriesFiltered || inventoriesFiltered.length === 0) ? null : inventoriesFiltered;
     } 
     
