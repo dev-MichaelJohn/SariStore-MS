@@ -20,7 +20,7 @@ export default class ProductController {
     static GetAllProducts = expressAsyncHandler(
     async(req: Request, res: Response, next: NextFunction) => {
         const { query }: { query: Partial<IProductSelect> } = req;
-        const { page } = req.params;
+        const { page } = req.query;
 
         const products = await ProductService.GetAllProducts(Number(page), query);
         if(!products || products.length === 0) return next(AppResponse.NotFound("❌ No products exists"));
