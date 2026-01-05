@@ -108,9 +108,11 @@ export default class ProductService {
      * @memberof ProductService
      */
     static async CreateProductViaTransaction(data: IProductInsert, tx: ITransaction): Promise<IProductSelect | null> {
-        console.log(data);
         if(!data || isObjectEmpty(data)) return null;
         if(!tx) return null;
+
+        const existingProduct = await ProductService.GetAllProducts(1, { name: data.name });
+        if(existingProduct != null && existingProduct.length > 0) throw AppResponse.BadRequest("❌ Product of the same name already exist!")
 
         const [ product ] = await tx.insert(Product)
             .values(data)
