@@ -41,9 +41,9 @@ export default class ProductCreatorService {
         });
     }
 
-    static async Update(product: Omit<Partial<IProductInsert>, "deletedAt">) {
+    static async Update(id: string, product: Omit<Partial<IProductInsert>, "deletedAt">) {
         return await db.transaction(async (tx) => {
-            const updated = await ProductService.UpdateProductViaTransaction(product, tx);
+            const updated = await ProductService.UpdateProductViaTransaction(id, product, tx);
             if(!updated) throw AppResponse.InternalServerError("❌ Failed to update product record");
 
             return updated;

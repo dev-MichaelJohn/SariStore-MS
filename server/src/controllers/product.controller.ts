@@ -45,9 +45,10 @@ export default class ProductController {
 
     static UpdateProduct = expressAsyncHandler(
     async(req: Request, res: Response, next: NextFunction) => {
+        const { id } = req.params;
         const { product } = req.body!.data;
         if(!product || isObjectEmpty(product)) return next(AppResponse.BadRequest("❌ Product data required"));
-        const updated = await ProductCreatorService.Update(product);
+        const updated = await ProductCreatorService.Update(String(id), product);
         if(!updated) return next(AppResponse.InternalServerError("❌ Failed to update product record"));
 
         const response = AppResponse.OK("✅ Product record updated successfully");

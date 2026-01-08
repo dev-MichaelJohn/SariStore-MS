@@ -130,11 +130,11 @@ export default class ProductService {
      * @return {*}  {Promise<IProductSelect | null>}
      * @memberof ProductService
      */
-    static async UpdateProductViaTransaction(data: Partial<IProductInsert>, tx: ITransaction): Promise<IProductSelect | null> {
+    static async UpdateProductViaTransaction(id: string, data: Partial<IProductInsert>, tx: ITransaction): Promise<IProductSelect | null> {
         if(!data || isObjectEmpty(data)) return null;
         if(!tx) return null;
 
-        let product = await ProductService.GetProductById(data?.id as string);
+        let product = await ProductService.GetProductById(id);
         if(!product) return null;
         if(product.deletedAt) throw AppResponse.BadRequest("❌ Product record doesn't exist");
 
