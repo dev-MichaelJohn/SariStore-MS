@@ -47,11 +47,7 @@ export default class ProductController {
     async(req: Request, res: Response, next: NextFunction) => {
         const { product } = req.body!.data;
         if(!product || isObjectEmpty(product)) return next(AppResponse.BadRequest("❌ Product data required"));
-        let updated;
-
-        await db.transaction(async(tx) => {
-             updated = await ProductService.UpdateProductViaTransaction(product, tx);
-        });
+        const updated = await ProductCreatorService.Update(product);
         if(!updated) return next(AppResponse.InternalServerError("❌ Failed to update product record"));
 
         const response = AppResponse.OK("✅ Product record updated successfully");
@@ -61,11 +57,7 @@ export default class ProductController {
     static DeleteProduct = expressAsyncHandler(
     async(req: Request, res: Response, next: NextFunction) => {
         const { id } = req.params;
-        let deleted;
-
-        await db.transaction(async(tx) => {
-            deleted = await ProductService.DeleteProductViaTransaction(String(id), tx);
-        });
+        const deleted = await ProductCreatorService.Delete(String(id));
         if(deleted === null) return next(AppResponse.InternalServerError("❌ Failed to delete product record"));
 
         const response = AppResponse.OK("✅ Product record deleted successfully");
