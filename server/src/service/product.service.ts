@@ -62,6 +62,8 @@ export default class ProductService {
             .where(eq(Product.id, id))
             .limit(1);
         if(!product) return null;
+        if(product.deletedAt) throw AppResponse.BadRequest("❌ Product record doesn't exist");
+        
         return product;
     };
 

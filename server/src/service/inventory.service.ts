@@ -50,6 +50,7 @@ export default class InventoryService {
         const [ inventory ] = await db.select()
             .from(Inventory)
             .where(eq(Inventory.id, id));
+        if(inventory && inventory.deletedAt) throw AppResponse.BadRequest("❌ Inventory record doesn't exist");
 
         return (!inventory) ? null : inventory;
     };
