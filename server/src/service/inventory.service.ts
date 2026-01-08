@@ -128,9 +128,11 @@ export default class InventoryService {
         inventoryRecord = { ...inventoryRecord, ...data };
         if(data.quantity !== undefined) {
             if(mode === "increment") inventoryRecord.quantity += data.quantity;
+
             if(mode === "decrement" && 
                 (inventoryRecord.quantity - data.quantity) > 0
             ) inventoryRecord.quantity -= data.quantity;
+            else throw AppResponse.BadRequest("❌ Insufficient quantity!!")
         }
 
         if(inventoryRecord.quantity < 0) return null;
