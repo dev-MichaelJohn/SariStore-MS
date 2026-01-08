@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import expressAsyncHandler from "express-async-handler";
 import InventoryService, { IInventorySelect } from "../service/inventory.service";
 import AppResponse from "../lib/response.lib";
+import InventoryCreatorService from "../service/inventoryCreator.service";
 
 export default class InventoryController {
     static GetInventoryById = expressAsyncHandler(
@@ -28,6 +29,13 @@ export default class InventoryController {
 
     static UpdateInventory = expressAsyncHandler(
     async(req: Request, res: Response, next: NextFunction) => {
-        
+        const { inventory, mode } = req.body!.data;
+        const { id } = req.params;
+
+        const updated = await InventoryCreatorService.Update(String(id), inventory, mode);
+        if(!updated) return next(AppResponse.InternalServerError("❌ Failed to update inventory record"));
+
+        const response = AppResponse.OK("✅ Inventory record updated successfully", { inventory: updated });
+        res.status(response.statusCode).json(response);
     });
 }
