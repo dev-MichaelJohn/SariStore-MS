@@ -126,17 +126,17 @@ export default class InventoryService {
         if(!inventoryRecord) return null;
         if(inventoryRecord.deletedAt) throw AppResponse.BadRequest("❌ Inventory record doesn't exist");
 
-        inventoryRecord = { ...inventoryRecord, ...data };
         if(data.quantity !== undefined && mode !== undefined) {
-            if(mode === "increment") inventoryRecord.quantity += data.quantity;
-
-            if(mode === "decrement" && 
-                (inventoryRecord.quantity - data.quantity) > 0
-            ) inventoryRecord.quantity -= data.quantity;
-            else throw AppResponse.BadRequest("❌ Insufficient quantity!!")
+            if(mode === "increment") {
+                data.quantity += inventoryRecord.quantity;
+            } else if(mode === "decrement" && (inventoryRecord.quantity - data.quantity) > 0) {
+                data.quantity = inventoryRecord.quantity - data.quantity;
+            } else throw AppResponse.BadRequest("❌ Insufficient quantity!!")
         }
-
         if(inventoryRecord.quantity < 0) return null;
+
+        inventoryRecord = { ...inventoryRecord, ...data };
+        console.log(inventoryRecord)
         const [ inventory ] = await tx.update(Inventory)
             .set(inventoryRecord)
             .where(eq(Inventory.id, inventoryRecord.id))
