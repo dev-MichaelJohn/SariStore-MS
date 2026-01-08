@@ -4,4 +4,6 @@ import InventoryController from "../controllers/inventory.controller";
 const InventoryRouter = Router();
 
 InventoryRouter.get("/");
-InventoryRouter.get("/:id", InventoryController.GetInventoryById)
+InventoryRouter.get("/:id", InventoryController.GetInventoryById);
+
+export default InventoryRouter;
