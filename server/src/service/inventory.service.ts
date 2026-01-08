@@ -136,7 +136,6 @@ export default class InventoryService {
         if(inventoryRecord.quantity < 0) return null;
 
         inventoryRecord = { ...inventoryRecord, ...data };
-        console.log(inventoryRecord)
         const [ inventory ] = await tx.update(Inventory)
             .set(inventoryRecord)
             .where(eq(Inventory.id, inventoryRecord.id))
