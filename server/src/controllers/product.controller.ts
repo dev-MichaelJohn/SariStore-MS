@@ -51,7 +51,7 @@ export default class ProductController {
         const updated = await ProductCreatorService.Update(String(id), product);
         if(!updated) return next(AppResponse.InternalServerError("❌ Failed to update product record"));
 
-        const response = AppResponse.OK("✅ Product record updated successfully");
+        const response = AppResponse.OK("✅ Product record updated successfully", { product: updated });
         res.status(response.statusCode).json(response);
     });
 
