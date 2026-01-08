@@ -55,8 +55,11 @@ export default class ProductCreatorService {
             const productDeleted = await ProductService.DeleteProductViaTransaction(id, tx);
             if(productDeleted === null) throw AppResponse.InternalServerError("❌ Failed to delete product record");
 
-            const inventoryDeleted = await InventoryService.DeleteInventoryViaTransaction(id, tx);
-            if(inventoryDeleted === null) throw AppResponse.InternalServerError("❌ Failes to delete inventory record");
+            const inventories = await InventoryService.GetAllInventories(1, { productId: id });
+            if(!inventories || inventories.length === 0) throw AppResponse.InternalServerError("❌ Inventory record doesn't exist");
+
+            const inventoryDeleted = await InventoryService.DeleteInventoryViaTransaction(String(inventories[0]?.id), tx);
+            if(inventoryDeleted === null) throw AppResponse.InternalServerError("❌ Failed to delete inventory record");
 
             return inventoryDeleted;
         });
