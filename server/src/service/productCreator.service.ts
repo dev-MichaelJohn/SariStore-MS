@@ -40,4 +40,25 @@ export default class ProductCreatorService {
             return newInventory;
         });
     }
+
+    static async Update(product: Omit<Partial<IProductInsert>, "deletedAt">) {
+        return await db.transaction(async (tx) => {
+            const updated = await ProductService.UpdateProductViaTransaction(product, tx);
+            if(!updated) throw AppResponse.InternalServerError("❌ Failed to update product record");
+
+            return updated;
+        });
+    }
+
+    static async Delete(id: string) {
+        return await db.transaction(async (tx) => {
+            const productDeleted = await ProductService.DeleteProductViaTransaction(id, tx);
+            if(productDeleted === null) throw AppResponse.InternalServerError("❌ Failed to delete product record");
+
+            const inventoryDeleted = await InventoryService.DeleteInventoryViaTransaction(id, tx);
+            if(inventoryDeleted === null) throw AppResponse.InternalServerError("❌ Failes to delete inventory record");
+
+            return inventoryDeleted;
+        });
+    }
 } 

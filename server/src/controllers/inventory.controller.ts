@@ -9,7 +9,7 @@ export default class InventoryController {
     static GetInventoryById = expressAsyncHandler(
     async(req: Request, res: Response, next: NextFunction) => {
         const { id } = req.params;
-        const inventory = InventoryService.GetInventoryById(String(id));
+        const inventory = await InventoryService.GetInventoryById(String(id));
         if(!inventory) return next(AppResponse.NotFound("❌ Inventory record not found"));
 
         const response = AppResponse.OK("✅ Inventory record found!!", { inventory: inventory });
