@@ -4,7 +4,6 @@ import AppResponse from "../lib/response.lib.js";
 import ProductService, { IProductSelect } from "../service/product.service.js";
 import ProductCreatorService from "../service/productCreator.service.js";
 import { isObjectEmpty } from "../lib/utils.lib.js";
-import db from "../config/db.config.js";
 
 export default class ProductController {
     static GetProductById = expressAsyncHandler(

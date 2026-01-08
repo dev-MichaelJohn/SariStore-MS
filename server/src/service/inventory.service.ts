@@ -118,16 +118,16 @@ export default class InventoryService {
      * @return {*}  {Promise<IInventorySelect | null>}
      * @memberof InventoryService
      */
-    static async UpdateInventoryViaTransaction(data: Partial<IInventoryInsert>, tx: ITransaction, mode: "increment" | "decrement"): Promise<IInventorySelect | null> {
+    static async UpdateInventoryViaTransaction(id: string, data: Partial<IInventoryInsert>, tx: ITransaction, mode?: "increment" | "decrement"): Promise<IInventorySelect | null> {
         if(!data || isObjectEmpty(data)) return null;
         if(!tx) return null;
 
-        let inventoryRecord = await InventoryService.GetInventoryById(data?.id as string);
+        let inventoryRecord = await InventoryService.GetInventoryById(id);
         if(!inventoryRecord) return null;
         if(inventoryRecord.deletedAt) throw AppResponse.BadRequest("❌ Inventory record doesn't exist");
 
         inventoryRecord = { ...inventoryRecord, ...data };
-        if(data.quantity !== undefined) {
+        if(data.quantity !== undefined && mode !== undefined) {
             if(mode === "increment") inventoryRecord.quantity += data.quantity;
 
             if(mode === "decrement" && 
