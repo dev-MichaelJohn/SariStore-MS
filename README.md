@@ -52,8 +52,8 @@ Sari-sari stores are a **vital part of neighborhoods in the Philippines**. Howev
   * ✅ Login page UI  
 
 * 🟨 **Product & Inventory Management**  
-  * 🟨 Controllers and service classes for product and inventory management  
-  * ⬜ API routes for product management  
+  * ✅ Controllers and service classes for product and inventory management  
+  * ✅ API routes for product management  
   * ⬜ Product and inventory management UI  
 
 * ⬜ **POS / Sales Processing**  
