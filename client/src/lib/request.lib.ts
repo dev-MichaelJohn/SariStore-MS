@@ -7,9 +7,7 @@ export const ForwardSetCookie = (setCookieHeader: string | null, cookies: Cookie
     if(!cookieMatch) return;
 
     const [, name, rawValue] = cookieMatch;
-
     const value = decodeURIComponent(rawValue);
-
     const options: Record<string, unknown> & { path: string } = {
         path: '/',
         httpOnly: true,
@@ -17,9 +15,10 @@ export const ForwardSetCookie = (setCookieHeader: string | null, cookies: Cookie
     };
 
     if(setCookieHeader.includes("Secure")) options.secure = true;
-    if(setCookieHeader.includes("Max-Age=")) {
-        const maxAge = setCookieHeader.match(/Max-Age=(\d+)/)?.[1];
-        if (maxAge) options.maxAge = parseInt(maxAge);
+    if(setCookieHeader.includes("Expires=")) {
+        const maxAge = String(setCookieHeader.match(/Expires=([^;]+)/)?.[1]);
+        const expiryDate = new Date(maxAge);
+        if(!isNaN(expiryDate.getTime())) options.expires = expiryDate;
     }
 
     cookies.set(name, value, options);
