@@ -79,7 +79,7 @@ export default class AuthController {
             return res.status(response.statusCode).json(response);
         }
         
-        const response = AppResponse.OK("✅ Session valid!", { user: req.user, redirect: "/dashboard" });
+        const response = AppResponse.OK("✅ Session valid!", { redirect: "/dashboard" });
         res.status(response.statusCode).json(response);
     }
 };
