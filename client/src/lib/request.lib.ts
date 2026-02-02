@@ -6,7 +6,10 @@ export const SERVER_API_URL = "http://localhost:5000/api";
 
 export const CheckSession = async () => {
     try {
-        await axios.get(`${SERVER_API_URL}/v1/auth/check-session`);
+        const response = await axios.get(`${SERVER_API_URL}/v1/auth/check-session`);
+        const payload: AppResponse = response.data;
+
+        toast.success(payload.message);
         return { success: true };
     } catch (error) {
         let message = "An unexpected error occurred.";

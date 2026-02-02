@@ -1,4 +1,5 @@
 import { CheckSession } from "@lib/request.lib";
+import { Toaster } from "react-hot-toast";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -9,14 +10,16 @@ const Dashboard = () => {
 
         const verify = async() => {
             const result = await CheckSession();
-            if(!result.success) navigate(result.redirectTo as string);
+            if(result.success) navigate(result.redirectTo as string);
         };
 
         verify();
     }, [navigate]);
 
     return (
-        <div>Welcome to login</div>
+        <div>
+            <Toaster />
+        </div>
     )
 };
 
