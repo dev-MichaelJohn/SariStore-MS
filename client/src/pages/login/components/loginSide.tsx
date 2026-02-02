@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import eyeOff from "../../../assets/svg/eye-off.svg";
 import eyeOn from "../../../assets/svg/eye.svg";
 import axios from "axios";
+import { redirect } from "react-router-dom";
 
 type LoginCredentials = {
     operatorCode: string,
@@ -76,7 +77,9 @@ const LoginSide = () => {
         try {
             setOnSubmit((prev) => !prev);
             const response = await axios.post("http://localhost:5000/api/v1/auth/login", { ...loginData });
-            
+            const payload: AppResponse = response.data;
+    
+            redirect(payload.data?.redirect as string);
             setOnSubmit((prev) => !prev);
         } catch(error) {
             if(axios.isAxiosError(error)) {
