@@ -14,7 +14,6 @@ const StrategyOpts: IStrategyOptions = {
 
 const MainStrategy: VerifyFunction = async(operatorCode: string, password: string, done: DoneFunction) => {
     try {
-        console.log(password);
         const operator = await OperatorService.GetOperatorByCode(operatorCode);
         if(!operator) return done(null, false, { message: "Operator not found" });
 
