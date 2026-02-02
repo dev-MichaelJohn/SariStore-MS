@@ -5,6 +5,7 @@ import eyeOff from "../../../assets/svg/eye-off.svg";
 import eyeOn from "../../../assets/svg/eye.svg";
 import axios from "axios";
 import { redirect } from "react-router-dom";
+import { SERVER_API_URL } from "@lib/request.lib";
 
 type LoginCredentials = {
     operatorCode: string,
@@ -76,7 +77,7 @@ const LoginSide = () => {
 
         try {
             setOnSubmit((prev) => !prev);
-            const response = await axios.post("http://localhost:5000/api/v1/auth/login", { ...loginData });
+            const response = await axios.post(`${SERVER_API_URL}/v1/auth/login`, { ...loginData });
             const payload: AppResponse = response.data;
     
             redirect(payload.data?.redirect as string);

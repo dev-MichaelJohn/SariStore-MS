@@ -46,7 +46,7 @@ App.use(session({
         maxAge: 24 * 60 * 60 * 1000, // 1 day
         sameSite: "none",
         secure: EnvConfig.NodeEnv === "production"
-    }
+   }
 }));
 
 App.use(passport.initialize());
