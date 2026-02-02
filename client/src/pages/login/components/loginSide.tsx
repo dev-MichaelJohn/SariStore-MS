@@ -78,7 +78,7 @@ const LoginSide = () => {
         e.preventDefault();
         const login = async() => {
             const result = await loginRequest();
-            if(!result.success) navigate(result.redirect as string);
+            if(result.success) navigate(result.redirect as string);
         };
 
         login();

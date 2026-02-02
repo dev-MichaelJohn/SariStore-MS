@@ -4,6 +4,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 import LoginPage from './pages/login/login.page.js';
 import Dashboard from './pages/dashboard/dashboard.page.js';
+import axios from 'axios';
+
+axios.defaults.withCredentials = true;
 
 const Router = createBrowserRouter([
     { path: "/login", element: <LoginPage />},
