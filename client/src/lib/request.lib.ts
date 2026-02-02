@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import type { AppResponse } from "../types/AppResponse";
 import { redirect } from "react-router-dom";
 
-const SERVER_API_URL = "http://localhost:500/api/";
+export const SERVER_API_URL = "http://localhost:500/api/";
 
 export const CheckSession = async() => {
     try {
@@ -16,7 +16,7 @@ export const CheckSession = async() => {
             }
 
             const currentPage = window.location.pathname;
-            const redirectPage = payload.errors?.redirect as string ?? "/login";
+            const redirectPage = payload.errors!.redirect as string;
             
             if(currentPage !== redirectPage) redirect(redirectPage);
             return;
