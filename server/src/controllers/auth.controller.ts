@@ -39,7 +39,7 @@ export default class AuthController {
                     const response = AppResponse.InternalServerError("❌ An error occurred during login", loginErr);
                     return res.status(response.statusCode).json(response);
                 }
-                const response = AppResponse.OK("✅ Login successful", { operator: user, redirect: "/home" });
+                const response = AppResponse.OK("✅ Login successful", { operator: user, redirect: "/dashboard" });
                 res.status(response.statusCode).json(response);
             });
         })(req, res, next);

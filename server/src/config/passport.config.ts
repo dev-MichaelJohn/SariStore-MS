@@ -14,10 +14,12 @@ const StrategyOpts: IStrategyOptions = {
 
 const MainStrategy: VerifyFunction = async(operatorCode: string, password: string, done: DoneFunction) => {
     try {
+        console.log(password);
         const operator = await OperatorService.GetOperatorByCode(operatorCode);
         if(!operator) return done(null, false, { message: "Operator not found" });
+        console.log(operator.password)
 
-        if(!ComparePassword(password, operator!.password as string)) return done(null, false, { message: "Invalid password" });
+        if(!ComparePassword(password, operator.password as string)) return done(null, false, { message: "Invalid password" });
 
         return done(null, operator);
     } catch(error) {

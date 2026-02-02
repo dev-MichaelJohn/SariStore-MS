@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import eyeOff from "../../../assets/svg/eye-off.svg";
 import eyeOn from "../../../assets/svg/eye.svg";
 import axios from "axios";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { SERVER_API_URL } from "@lib/request.lib";
 
 type LoginCredentials = {
@@ -56,6 +56,8 @@ const regionalMessages = [
 ];
 
 const LoginSide = () => {
+    const navigate = useNavigate();
+
     const [index, setIndex] = useState(0);
     const [fade, setFade] = useState(true);
 
@@ -72,34 +74,43 @@ const LoginSide = () => {
         setLoginData((prev) => ({...prev, [name]: value}));
     };
 
-    const handleLoginSubmit = async(e: SubmitEvent<HTMLFormElement>) => {
+    const handleLoginSubmit = (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
+        const login = async() => {
+            const result = await loginRequest();
+            if(!result.success) navigate(result.redirect as string);
+        };
 
-        try {
-            setOnSubmit((prev) => !prev);
-            const response = await axios.post(`${SERVER_API_URL}/v1/auth/login`, { ...loginData });
-            const payload: AppResponse = response.data;
-    
-            redirect(payload.data?.redirect as string);
-            setOnSubmit((prev) => !prev);
-        } catch(error) {
-            if(axios.isAxiosError(error)) {
-                const payload: AppResponse = error.response?.data;
-                const finalMessage = payload?.message 
-                    || error.response?.statusText 
-                    || "Something went wrong. Please try again!";
-
-                toast.error(finalMessage);
-            } else {
-                toast.error("An unexpected error occured.");
-            }
-
-            setOnSubmit((prev) => !prev);
-        }
+        login();
     };
 
     const handleRevealPassword = () => {
         setRevealPassword((prev) => !prev);
+    };
+
+    const loginRequest = async() => {
+        try {
+            setOnSubmit(true);
+            const response = await axios.post(`${SERVER_API_URL}/v1/auth/login`, { ...loginData });
+            const payload: AppResponse = response.data;
+
+            console.log(payload)
+
+            toast.success("Login sucessful. Welcome back!");
+            setOnSubmit(false);
+            return { success: true, redirect: payload.data?.redirect };
+        } catch(error) {
+            let message = "An unexpected error occurred.";
+
+            if (axios.isAxiosError(error)) {
+                const payload: AppResponse = error.response?.data;
+                message = payload?.message || error.response?.statusText || message;
+            }
+            
+            toast.error(message);
+            setOnSubmit(false);
+            return { success: false };
+        }
     };
 
     useEffect(() => {
