@@ -19,7 +19,7 @@ const LoginPage = () => {
     }, [navigate]);
 
     return (
-        <div className="flex h-dvh w-full bg-red-500 flex-wrap">
+        <div className="flex h-dvh w-full flex-wrap">
             <Toaster position="top-center" />
             <LoginBox />
             <LoginSide />

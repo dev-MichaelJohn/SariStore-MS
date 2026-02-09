@@ -1,26 +1,32 @@
 import { CheckSession } from "@lib/request.lib";
 import { Toaster } from "react-hot-toast";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import DashboardMenu from "./components/dashboardMenu";
+import { Outlet, useNavigate } from "react-router-dom";
 
-const Dashboard = () => {
+
+const DashboardPage = () => {
     const navigate = useNavigate();
     
     useEffect(() => {
 
         const verify = async() => {
             const result = await CheckSession();
-            if(result.success) navigate(result.redirectTo as string);
+            if(!result.success) navigate(result.redirectTo as string);
         };
 
-        verify();
+        //verify();
     }, [navigate]);
 
     return (
-        <div>
+        <div className="flex h-dvh w-full flex-wrap bg-(--bg-dark)">
             <Toaster />
+            <DashboardMenu />
+            <div className="flex-1">
+                <Outlet />
+            </div>
         </div>
     )
 };
 
-export default Dashboard;
+export default DashboardPage;

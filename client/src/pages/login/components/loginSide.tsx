@@ -76,6 +76,8 @@ const LoginSide = () => {
 
     const handleLoginSubmit = (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if(onSubmit) return;
+
         const login = async() => {
             const result = await loginRequest();
             if(result.success) navigate(result.redirect as string);
@@ -97,7 +99,6 @@ const LoginSide = () => {
             console.log(payload)
 
             toast.success("Login sucessful. Welcome back!");
-            setOnSubmit(false);
             return { success: true, redirect: payload.data?.redirect };
         } catch(error) {
             let message = "An unexpected error occurred.";
@@ -108,8 +109,9 @@ const LoginSide = () => {
             }
             
             toast.error(message);
-            setOnSubmit(false);
             return { success: false };
+        } finally {
+            setOnSubmit(false);
         }
     };
 
@@ -127,7 +129,7 @@ const LoginSide = () => {
     }, []);
 
     return (
-        <div className="relative flex flex-col flex-1 items-center justify-center h-dvh bg-(--bg)">
+        <div className="relative flex flex-col flex-1 items-center justify-center h-dvh bg-(--bg-dark)">
             
             <div className="absolute top-8 right-10">
                 <span className="text-2xl text-shadow-lg font-black tracking-tighter text-(--text)">
@@ -144,11 +146,11 @@ const LoginSide = () => {
                 </p>
                 
                 <div className="flex flex-col justify-evenly h-1/2 w-full">
-                    <div className="flex items-center shadow-sm rounded-2xl p-5 h-1/4 w-full bg-(--bg-dark)">
+                    <div className="flex items-center shadow-sm rounded-2xl p-5 h-1/4 w-full bg-(--bg-light)">
                         <input type="text" name="operatorCode" value={loginData.operatorCode} placeholder="Operator Code" className={`w-full outline-0 ${(onSubmit) ? "text-(--text-muted)" : "text-(--text)"}`} disabled={onSubmit}
                             onChange={handleChange} />
                     </div> 
-                    <div className="flex justify-between items-center shadow-sm rounded-2xl p-5 h-1/4 w-full bg-(--bg-dark)">
+                    <div className="flex justify-between items-center shadow-sm rounded-2xl p-5 h-1/4 w-full bg-(--bg-light)">
                         <input type={(revealPassword) ? "text" : "password"} name="password" value={loginData.password} placeholder="Password" className={`w-full outline-0 ${(onSubmit) ? "text-(--text-muted)" : "text-(--text)"}`} disabled={onSubmit}
                             onChange={handleChange} />
                         <button type="button" className="bg-green" onClick={handleRevealPassword}>
@@ -158,7 +160,7 @@ const LoginSide = () => {
                 </div>
 
                 <div className="flex h-1/7 w-full justify-between items-center">
-                    <button type="submit" className="py-3.5 px-10 rounded-2xl bg-(--primary) hover:bg-(--secondary) active:bg-(--success) text-(--highlight) text-shadow-lg font-bold shadow-sm cursor-pointer transition-all">
+                    <button type="submit" className="py-3.5 px-10 rounded-2xl bg-(--primary) hover:bg-(--secondary) active:bg-(--success) text-(--text) text-shadow-lg font-bold shadow-sm cursor-pointer transition-all">
                         Login
                     </button>
                     <a href="#" className="text-(--secondary) hover:text-(--primary) font-semibold underline underline-offset-4">
