@@ -16,8 +16,11 @@ const menuButtons = [
 
 const DashboardMenu = () => {
     const generateMenuButtons = menuButtons.map((menu, index) => (
-        <NavLink to={`/dashboard/${menu.path}`} key={index} 
-        className="flex p-2.5 gap-2.5 w-full items-center text-lg text-shadow-lg text-(--text) rounded-2xl cursor-pointer hover:bg-(--bg-light)" end={(menu.path === "")}>
+        <NavLink to={`/dashboard/${menu.path}`} key={index}
+        className={({isActive}) => `flex p-2.5 gap-2.5 w-full items-center text-lg rounded-2xl cursor-pointer 
+            ${isActive ? "text-(--text) bg-(--bg-light) font-extrabold text-shadow-lg" : "text-(--text-muted) hover:bg-(--bg-light)"}`
+        } 
+        end={(menu.path === "")}>
             <img src={menu.icon} alt={menu.alt} />
             {menu.pageName}
         </NavLink>
