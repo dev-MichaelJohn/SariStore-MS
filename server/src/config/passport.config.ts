@@ -17,7 +17,8 @@ const MainStrategy: VerifyFunction = async(operatorCode: string, password: strin
         const operator = await OperatorService.GetOperatorByCode(operatorCode);
         if(!operator) return done(null, false, { message: "Operator not found" });
 
-        if(!ComparePassword(password, operator!.password)) return done(null, false, { message: "Invalid password" });
+        const verify = await ComparePassword(password, operator.password as string);
+        if(!verify) return done(null, false, { message: "Invalid password" });
 
         return done(null, operator);
     } catch(error) {

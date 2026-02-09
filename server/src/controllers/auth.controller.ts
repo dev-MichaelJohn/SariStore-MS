@@ -39,7 +39,7 @@ export default class AuthController {
                     const response = AppResponse.InternalServerError("❌ An error occurred during login", loginErr);
                     return res.status(response.statusCode).json(response);
                 }
-                const response = AppResponse.OK("✅ Login successful", { operator: user, redirect: "/home" });
+                const response = AppResponse.OK("✅ Login successful", { operator: user, redirect: "/dashboard" });
                 res.status(response.statusCode).json(response);
             });
         })(req, res, next);
@@ -67,7 +67,7 @@ export default class AuthController {
                 }
 
                 res.clearCookie("sari.sid");
-                const response = AppResponse.OK("✅ Logout successful", { redirect: "/login" });
+                const response = AppResponse.OK("✅ Logout successful", { redirect: "" });
                 res.status(response.statusCode).json(response);
             });
         });
@@ -75,11 +75,11 @@ export default class AuthController {
 
     static CheckSession(req: Request, res: Response) {
         if(!req.isAuthenticated()) { 
-            const response = AppResponse.Unauthorized("❌ Session expired", { redirect: "/login" });
+            const response = AppResponse.Unauthorized("❌ Session expired", { redirect: "" });
             return res.status(response.statusCode).json(response);
         }
         
-        const response = AppResponse.OK("✅ Session valid!", { user: req.user, redirect: "/dashboard" });
+        const response = AppResponse.OK("✅ Session valid!", { redirect: "/dashboard" });
         res.status(response.statusCode).json(response);
     }
 };

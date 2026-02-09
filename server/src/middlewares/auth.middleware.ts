@@ -38,7 +38,7 @@ export default class AuthMiddleware {
     static ValidateOperatorCode(req: Request, _res: Response, next: NextFunction) {
         const { operatorCode } = req.body;
         const result = OperatorCode.safeParse(operatorCode);
-        if(!result.success) throw AppResponse.BadRequest(undefined, result.error.issues[0]?.message);
+        if(!result.success) throw AppResponse.BadRequest(result.error.issues[0]?.message);
         next();
     }
 
@@ -54,7 +54,7 @@ export default class AuthMiddleware {
     static ValidatePassword(req: Request, _res: Response, next: NextFunction) {
         const { password } = req.body;
         const result = Password.safeParse(password);
-        if(!result.success) throw AppResponse.BadRequest(undefined, result.error.issues[0]?.message);
+        if(!result.success) throw AppResponse.BadRequest(result.error.issues[0]?.message);
         next();
     }
 
@@ -70,9 +70,9 @@ export default class AuthMiddleware {
     static ValidateLogin(req: Request, _res: Response, next: NextFunction) {
         const { operatorCode, password } = req.body;
         const operatorCodeResult = OperatorCode.safeParse(operatorCode);
-        if(!operatorCodeResult.success) throw AppResponse.BadRequest(undefined, operatorCodeResult.error.issues[0]?.message);
+        if(!operatorCodeResult.success) throw AppResponse.BadRequest(operatorCodeResult.error.issues[0]?.message);
         const passwordResult = Password.safeParse(password);
-        if(!passwordResult.success) throw AppResponse.BadRequest(undefined, passwordResult.error.issues[0]?.message);
+        if(!passwordResult.success) throw AppResponse.BadRequest(passwordResult.error.issues[0]?.message);
         next();
     }
 };

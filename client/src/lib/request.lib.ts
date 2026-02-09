@@ -1,52 +1,28 @@
-import type { Cookies } from "@sveltejs/kit";
+import axios from "axios";
+import type { AppResponse } from "../types/AppResponse";
+import toast from "react-hot-toast";
 
-export const ForwardSetCookie = (setCookieHeader: string | null, cookies: Cookies) => {
-    if(!setCookieHeader) return;
+export const SERVER_API_URL = "http://localhost:5000/api";
 
-    const cookieMatch = setCookieHeader.match(/^([^=]+)=([^;]+)/)
-    if(!cookieMatch) return;
+export const CheckSession = async () => {
+    try {
+        const response = await axios.get(`${SERVER_API_URL}/v1/auth/check-session`);
+        const payload: AppResponse = response.data;
 
-    const [, name, rawValue] = cookieMatch;
-    const value = decodeURIComponent(rawValue);
-    const options: Record<string, unknown> & { path: string } = {
-        path: '/',
-        httpOnly: true,
-        sameSite: 'lax' as const,
-    };
+        toast.success(payload.message);
+        return { success: true };
+    } catch (error) {
+        let message = "An unexpected error occurred.";
+        let redirectTo = "/login";
 
-    if(setCookieHeader.includes("Secure")) options.secure = true;
-    if(setCookieHeader.includes("Expires=")) {
-        const maxAge = String(setCookieHeader.match(/Expires=([^;]+)/)?.[1]);
-        const expiryDate = new Date(maxAge);
-        if(!isNaN(expiryDate.getTime())) options.expires = expiryDate;
+        if (axios.isAxiosError(error)) {
+            const payload: AppResponse = error.response?.data;
+            message = payload?.message || error.response?.statusText || message;
+            // Accessing redirect from your specific AppResponse structure
+            redirectTo = payload?.errors?.redirect as string || "/login";
+        }
+
+        toast.error(message);
+        return { success: false, redirectTo };
     }
-
-    cookies.set(name, value, options);
-};
-
-const API_URL = "http://localhost:3030";
-type APIFecthOptions = RequestInit & {
-    cookies?: { name: string; value: string }[];
-}
-
-export const APIFetch = async(endpoint: string, options: APIFecthOptions = {}):
-Promise<{ res: Response, payload: Record<string, unknown> }> => {
-    const { cookies, ...fetchOptions } = options;
-
-    const headers = new Headers({
-        "Content-Type": "application/json",
-        ...(fetchOptions.headers || {})
-    });
-
-    if(cookies && cookies.length > 0) headers.set('cookie', cookies.map(c => `${c.name}=${c.value}`).join('; '));
-
-    const res = await fetch(`${API_URL}${endpoint}`, {
-        ...fetchOptions,
-        credentials: "include",
-        headers
-    });
-
-    const payload = await res.json();
-
-    return { res, payload }
 };

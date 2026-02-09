@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import EnvConfig from "./config/env.config.js";
@@ -20,6 +20,14 @@ App.use(cors({
     origin: "http://localhost:5173",
     credentials: true,
 }));
+
+const ServerLogger = (req: Request, res: Response, next: NextFunction) => {
+    const tz = new Date().toLocaleTimeString('en-PH');
+    console.log(`\x1b[36m[${tz}]\x1b[0m \x1b[32m${req.method}\x1b[0m ${req.url}`);
+    next();
+};
+
+App.use(ServerLogger);
 /*
  * 🧩 Middlewares Setup
  */
@@ -44,9 +52,9 @@ App.use(session({
         path: "/",
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000, // 1 day
-        sameSite: "none",
+        sameSite: "lax",
         secure: EnvConfig.NodeEnv === "production"
-    }
+   }
 }));
 
 App.use(passport.initialize());
