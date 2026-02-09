@@ -37,7 +37,7 @@ Sari-sari stores are a **vital part of neighborhoods in the Philippines**. Howev
 
 <p>
   <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=html,css,tailwind,ts,svelte,express,postgres,vite,neovim" />
+    <img src="https://skillicons.dev/icons?i=html,css,tailwind,ts,react,express,postgres,vite,neovim" />
   </a>
 </p>
 
@@ -81,7 +81,7 @@ Sari-sari stores are a **vital part of neighborhoods in the Philippines**. Howev
 
 ## ⚠️ Disclaimer
 
-* This is a **personal project** built to practice new technologies (Neovim, TypeScript, Svelte, Drizzle ORM), prepare for my **Capstone thesis**, and potentially **contribute to the community**.  
+* This is a **personal project** built to practice new technologies (Neovim, TypeScript, React, Drizzle ORM), prepare for my **Capstone thesis**, and potentially **contribute to the community**.  
 * Due to limited experience with UI/UX design, full mobile responsiveness may be implemented in later stages.
 * Offline operation and migrating to SQLite for local usage will be considered if time allows.
 * Some features are MVP, while others are planned stretch goals—expect this project to evolve over time.
