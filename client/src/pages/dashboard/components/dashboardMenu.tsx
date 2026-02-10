@@ -40,8 +40,8 @@ const DashboardMenu = () => {
                         
             <div className="p-2.5 justify-self-end w-full">
                 <button type="button" className="flex p-2.5 gap-2.5 w-full items-center text-lg text-shadow-lg text-(--text) rounded-2xl cursor-pointer hover:bg-(--bg-light)">
-                    <img src={logOut} alt="log out button" />
-                    Log in
+                    <img src={logOut} alt="log out button" className="size-6"/>
+                    Log out
                 </button>
             </div>
         </div>
