@@ -22,7 +22,7 @@ const DashboardPage = () => {
         <div className="flex h-dvh w-full flex-wrap bg-(--bg-dark)">
             <Toaster />
             <DashboardMenu />
-            <div className="flex-1">
+            <div className="flex-1 h-dvh w-full">
                 <Outlet />
             </div>
         </div>

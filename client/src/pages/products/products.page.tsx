@@ -1,6 +1,10 @@
+import ProductHeader from "./components/productHeader";
+
 const ProductsPage = () => {
     return (
-        <div className="text-(--text)">Products Page!!</div>
+        <div className="flex flex-col p-10">
+            <ProductHeader />
+        </div>
     );
 };
 
