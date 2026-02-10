@@ -41,7 +41,7 @@ export default class ProductCategoryService {
      * @return {*}  {(Promise<IProductCategorySelect[] | null>)}
      * @memberof ProductCategoryService
      */
-    static async GetAllProductCategory(page: number, filters?: Omit<IProductCategorySelect, "id">): Promise<IProductCategorySelect[] | null> {
+    static async GetAllProductCategory(page?: number, filters?: Omit<IProductCategorySelect, "id">): Promise<IProductCategorySelect[] | null> {
         if(!page || page < 0) return null;
         
         const DEFAULT_PAGE_ITEMS = 10;
