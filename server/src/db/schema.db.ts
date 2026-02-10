@@ -28,6 +28,7 @@ export const Operator = pgTable("operators", {
 export const ProductCategory = pgTable("product_categories", {
     id: uuid("id").primaryKey().defaultRandom(),
     name: varchar("name", { length: 256 }).notNull().unique(),
+    description: varchar("name", { length: 256 }).notNull(),
 }, (table) => [
     index("product_category_name_idx").on(table.name),
 ]);
