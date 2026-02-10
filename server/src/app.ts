@@ -69,8 +69,12 @@ import "./config/passport.config.js";
  */
 import v1Router from "./routers/index.router.js";
 //import { SeedOperator } from "./db/seed.db.js";
+import { SeedProductCategories } from "./db/seed.db.js";
 
 App.get("/", (req, res) => {
+    // To test Product Category Seeding
+    SeedProductCategories();
+
     // To test Operator Seeding
     //SeedOperator({
     //    personId: "",
