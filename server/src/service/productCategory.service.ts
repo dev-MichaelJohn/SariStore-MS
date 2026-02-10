@@ -42,9 +42,9 @@ export default class ProductCategoryService {
      * @memberof ProductCategoryService
      */
     static async GetAllProductCategory(page?: number, filters?: Omit<IProductCategorySelect, "id">): Promise<IProductCategorySelect[] | null> {
-        if(!page || page < 0) return null;
+        //if(!page || page < 0) return null;
         
-        const DEFAULT_PAGE_ITEMS = 10;
+        //const DEFAULT_PAGE_ITEMS = 10;
         let query;
 
         if(filters && filters.name.trim().length !== 0)  {
@@ -56,9 +56,8 @@ export default class ProductCategoryService {
                 .from(ProductCategory);
         }
 
-        const productCategories = await query
-            .limit(DEFAULT_PAGE_ITEMS)
-            .offset((page - 1) * DEFAULT_PAGE_ITEMS);
+        const productCategories = await query;
+        console.log(productCategories);
         if(!productCategories || productCategories.length === 0) return null;
         return productCategories;
     }
