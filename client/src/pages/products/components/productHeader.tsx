@@ -55,7 +55,7 @@ const ProductHeader = () => {
     }, []);
 
     return (
-        <div className="w-full flex items-center gap-2.5">
+        <div className="p-5 w-full flex items-center gap-2.5">
             <h1 className="flex-1 text-3xl font-extrabold text-(--text)">Products</h1>
             <div className="flex w-1/4 bg-(--bg) p-2.5 px-5 rounded-3xl border border-(--border)">
                 <input type="text" placeholder="Search" className="flex-1 placeholder:text-(--text-muted) text-(--text) font-light text-lg outline-0" />
