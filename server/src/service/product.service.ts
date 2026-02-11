@@ -1,5 +1,5 @@
 import db, { ITransaction } from "../config/db.config.js";
-import { eq, and, ilike, lte, SQL } from "drizzle-orm";
+import { eq, and, ilike, lte, SQL, count, isNotNull } from "drizzle-orm";
 import { Product } from "../db/schema.db.js";
 import { Column } from "drizzle-orm";
 import { isObjectEmpty } from "../lib/utils.lib.js";
@@ -7,6 +7,16 @@ import AppResponse from "../lib/response.lib.js";
 
 export type IProductSelect = typeof Product.$inferSelect;
 export type IProductInsert = typeof Product.$inferInsert;
+
+export type IProductList = {
+    list: Array<IProductSelect>,
+    pagination: {
+        page: number,
+        totalPages: number,
+        hasNext: boolean,
+        hasPrev: boolean,
+    },
+};
 
 /**
  * Wrapper service for Product-model related database operations   
@@ -43,7 +53,7 @@ export default class ProductService {
             }
         }).filter((c): c is SQL<boolean> => c !== undefined);
         
-        return conditions.length > 0 ? and(...conditions) as SQL<boolean> : null;
+        return conditions.length > 0 ? and(...conditions, isNotNull(Product.deletedAt)) as SQL<boolean> : null;
     };
 
     /**
@@ -76,28 +86,35 @@ export default class ProductService {
      * @return {*}  {(Promise<IProductSelect[] | null>)}
      * @memberof ProductService
      */
-    static async GetAllProducts(page: number, filters?: Partial<IProductSelect>): Promise<IProductSelect[] | null> {
+    static async GetAllProducts(page: number, filters?: Partial<IProductSelect>): Promise<IProductList | null> {
         if(page < 0) return null;
         
         const filterParams = ProductService.GenerateFilters(filters);
         const DEFAULT_PAGE_ITEMS = 10;
-        let query;
 
-        if(!filterParams) {
-            query = db.select()
-                .from(Product)
-        } else {
-            query = db.select()
-                .from(Product)
-                .where(filterParams);
-        }
+        const [ totalProducts ] = await db.select({ count: count() })
+            .from(Product)
+            .where(filterParams  ?? undefined);
 
-        const products = await query.limit(DEFAULT_PAGE_ITEMS)
+        const totalPages = Math.ceil(Number(totalProducts) / DEFAULT_PAGE_ITEMS);
+        
+        const products = await db.select()
+            .from(Product)
+            .where(filterParams ?? undefined)
+            .limit(DEFAULT_PAGE_ITEMS)
             .offset((page - 1) * DEFAULT_PAGE_ITEMS);
-        if(!products) return null;
 
-        const productsFiltered = products.filter((product) => !product.deletedAt);
-        return (productsFiltered.length === 0) ? null : productsFiltered;
+        if(!products || products.length === 0) return null;
+
+        return {
+            list: products,
+            pagination: {
+                page: page,
+                totalPages: totalPages,
+                hasNext: page < totalPages,
+                hasPrev: page > 1
+            }
+        };
     };
     
     /**
@@ -114,7 +131,7 @@ export default class ProductService {
         if(!tx) return null;
 
         const existingProduct = await ProductService.GetAllProducts(1, { name: data.name });
-        if(existingProduct != null && existingProduct.length > 0) throw AppResponse.BadRequest("❌ Product of the same name already exist!");
+        if(existingProduct != null && existingProduct.list.length > 0) throw AppResponse.BadRequest("❌ Product of the same name already exist!");
 
         const [ product ] = await tx.insert(Product)
             .values(data)

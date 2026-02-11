@@ -57,7 +57,6 @@ export default class ProductCategoryService {
         }
 
         const productCategories = await query;
-        console.log(productCategories);
         if(!productCategories || productCategories.length === 0) return null;
         return productCategories;
     }
